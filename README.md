@@ -348,8 +348,8 @@ uvicorn src.datathon_offerexp.app:app --reload
 
 | Etapa                    | Status |
 | ------------------------ | ------ |
-| Organização do Projeto   | ⏳      |
-| Base Kaggle + EDA        | ⏳      |
+| Organização do Projeto   | ✅     |
+| Base Kaggle + EDA        | ✅     |
 | Enriquecimento Sintético | ⏳      |
 | Thompson Sampling        | ⏳      |
 | Avaliação Offline        | ⏳      |
