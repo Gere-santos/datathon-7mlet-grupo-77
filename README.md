@@ -1,10 +1,10 @@
-# 🚀 Datathon 7MLET — Plataforma de Experimentação Adaptativa para Ofertas Financeiras
+# Datathon 7MLET — Plataforma de Experimentação Adaptativa para Ofertas Financeiras
 
 > Projeto desenvolvido para o Datathon 7MLET da Pós-Tech FIAP com foco em **Multi-Armed Bandits**, **MLOps**, **LLMOps**, **Governança de IA** e **Arquitetura Azure**.
 
 ---
 
-# 📖 Visão Geral
+# Visão Geral
 
 Este projeto propõe a construção de uma plataforma inteligente capaz de decidir automaticamente qual oferta, mensagem ou próximo passo apresentar a um cliente em canais digitais.
 
@@ -20,7 +20,7 @@ O objetivo é comparar abordagens tradicionais de decisão com algoritmos de **M
 
 ---
 
-# 🎯 Problema de Negócio
+# Problema de Negócio
 
 Instituições financeiras realizam milhares de interações diariamente com clientes elegíveis para diferentes produtos e serviços.
 
@@ -33,58 +33,58 @@ Métodos tradicionais como:
 
 possuem limitações importantes:
 
-❌ Demoram para reagir a mudanças de comportamento.
+Demoram para reagir a mudanças de comportamento.
 
-❌ Desperdiçam tráfego em ofertas pouco eficientes.
+Desperdiçam tráfego em ofertas pouco eficientes.
 
-❌ Possuem baixa capacidade de personalização.
+Possuem baixa capacidade de personalização.
 
-❌ Dificultam auditoria e explicabilidade.
+Dificultam auditoria e explicabilidade.
 
 Este projeto propõe uma abordagem adaptativa baseada em aprendizado contínuo.
 
 ---
 
-# 🏆 Objetivos
+# Objetivos
 
 ## Objetivo Principal
 
 Construir uma plataforma capaz de:
 
-✅ Selecionar automaticamente ofertas.
+ Selecionar automaticamente ofertas.
 
-✅ Aprender com recompensas observadas.
+ Aprender com recompensas observadas.
 
-✅ Explicar decisões.
+ Explicar decisões.
 
-✅ Monitorar desempenho.
+ Monitorar desempenho.
 
-✅ Garantir rastreabilidade e governança.
+ Garantir rastreabilidade e governança.
 
 ---
 
 ## Objetivos Técnicos
 
-* 📊 Pipeline de dados reproduzível.
-* 🤖 Baseline determinístico.
-* 🎰 Thompson Sampling.
-* 📈 Avaliação offline.
-* 🌐 API de decisão.
-* 📝 Logs auditáveis.
-* 📡 Observabilidade.
-* 🧠 Assistente com LLM.
-* ☁️ Arquitetura Microsoft Azure.
-* 🔒 Governança e LGPD.
+*  Pipeline de dados reproduzível.
+*  Baseline determinístico.
+*  Thompson Sampling.
+*  Avaliação offline.
+*  API de decisão.
+*  Logs auditáveis.
+*  Observabilidade.
+*  Assistente com LLM.
+*  Arquitetura Microsoft Azure.
+*  Governança e LGPD.
 
 ---
 
-# 📂 Dataset
+# Dataset
 
 ## Base Escolhida
 
 **Bank Marketing Dataset**
 
-🔗 https://www.kaggle.com/datasets/henriqueyamahata/bank-marketing
+ https://www.kaggle.com/datasets/henriqueyamahata/bank-marketing
 
 ### Justificativa
 
@@ -97,7 +97,7 @@ A base contém informações relacionadas a campanhas bancárias e conversão de
 
 ---
 
-## 🎯 Variável Alvo
+##  Variável Alvo
 
 | Coluna | Descrição                        |
 | ------ | -------------------------------- |
@@ -105,7 +105,7 @@ A base contém informações relacionadas a campanhas bancárias e conversão de
 
 ---
 
-## ⚠️ Tratamento de Vazamento Temporal
+## Tratamento de Vazamento Temporal
 
 A coluna abaixo será removida da modelagem:
 
@@ -117,7 +117,7 @@ O uso dessa variável geraria **data leakage**, comprometendo a validade da aval
 
 ---
 
-# 🏗️ Arquitetura Conceitual
+# Arquitetura Conceitual
 
 ```text
 Base Kaggle
@@ -149,7 +149,7 @@ Assistente LLM
 
 ---
 
-# 📁 Estrutura do Projeto
+# Estrutura do Projeto
 
 ```text
 datathon-7mlet-grupo-77/
@@ -190,9 +190,9 @@ datathon-7mlet-grupo-77/
 
 ---
 
-# 🧩 Componentes Principais
+# Componentes Principais
 
-## 🎰 Política Adaptativa
+## Política Adaptativa
 
 Algoritmo principal:
 
@@ -205,7 +205,7 @@ Referências complementares:
 
 ---
 
-## 🎁 Catálogo de Ofertas
+## Catálogo de Ofertas
 
 Braços simulados:
 
@@ -218,7 +218,7 @@ Braços simulados:
 
 ---
 
-## 📝 Logs Auditáveis
+## Logs Auditáveis
 
 Cada decisão registra:
 
@@ -232,7 +232,7 @@ Cada decisão registra:
 
 ---
 
-## 🤖 Assistente com LLM
+## Assistente com LLM
 
 Capacidades:
 
@@ -244,7 +244,7 @@ Capacidades:
 
 ---
 
-# 📊 Observabilidade
+# Observabilidade
 
 ## Métricas Técnicas
 
@@ -263,20 +263,20 @@ Capacidades:
 
 ---
 
-# 🔒 Governança
+#  Governança
 
 A solução contempla:
 
-* 📄 Model Card
-* 📄 System Card
-* ⚖️ Fairness Review
-* 🔐 LGPD Plan
-* 🛡️ Guardrails
-* 👤 Human-in-the-loop
+*  Model Card
+*  System Card
+*  Fairness Review
+*  LGPD Plan
+*  Guardrails
+*  Human-in-the-loop
 
 ---
 
-# 🛠️ Tecnologias
+#  Tecnologias
 
 | Categoria     | Ferramentas     |
 | ------------- | --------------- |
@@ -292,7 +292,7 @@ A solução contempla:
 
 ---
 
-# 🚀 Execução Local
+#  Execução Local
 
 ### Criar ambiente virtual
 
@@ -334,7 +334,7 @@ uvicorn src.datathon_offerexp.app:app --reload
 
 ---
 
-# ⚠️ Limitações
+#  Limitações
 
 * Utiliza dados públicos do Kaggle.
 * Utiliza enriquecimento sintético.
@@ -344,7 +344,7 @@ uvicorn src.datathon_offerexp.app:app --reload
 
 ---
 
-# 🗺️ Roadmap
+#  Roadmap
 
 | Etapa                    | Status |
 | ------------------------ | ------ |
@@ -360,13 +360,13 @@ uvicorn src.datathon_offerexp.app:app --reload
 
 ---
 
-# 📜 Licença
+#  Licença
 
 Projeto desenvolvido exclusivamente para fins acadêmicos no contexto do Datathon 7MLET da Pós-Tech FIAP.
 
 ---
 
-# 👥 Equipe
+#  Equipe
 
 **Grupo  — Datathon 7MLET**
 
