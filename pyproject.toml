@@ -1,0 +1,21 @@
+dependencies = [
+    "pandas",
+    "numpy",
+    "scikit-learn",
+
+    "matplotlib",
+    "seaborn",
+    "plotly",
+
+    "fastapi",
+    "uvicorn",
+
+    "mlflow",
+
+    "pydantic",
+
+    "jupyter",
+    "notebook",
+
+    "python-dotenv"
+]

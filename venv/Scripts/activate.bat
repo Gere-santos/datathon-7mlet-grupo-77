@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\gerem\Desktop\tech_challenge_5\venv
+set VIRTUAL_ENV=C:\Users\gerem\Desktop\datathon-7mlet-grupo-77\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
