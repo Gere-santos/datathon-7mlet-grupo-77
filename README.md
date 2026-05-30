@@ -370,6 +370,12 @@ Projeto desenvolvido exclusivamente para fins acadêmicos no contexto do Datatho
 
 **Grupo  — Datathon 7MLET**
 
+- GEREMIAS FRANCISCO DE OLIVEIRA SANTOS
+  - geremias_cte@hotmail.com
+  
+- WAGNER ULISSES FONTALVA
+  - wagner.ulisses@gmail.com
+
 Pós-Tech FIAP — Machine Learning Engineering
 
 
