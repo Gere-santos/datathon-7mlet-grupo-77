@@ -1,0 +1,5 @@
+arm_id,arm_name,arm_type,description,is_control
+0,sem_oferta,controle,Grupo controle sem oferta ativa.,True
+1,educacao_financeira,conteudo,Conteúdo educativo sobre organização financeira.,False
+2,simulador_credito,ferramenta,Simulador de crédito para avaliar opções disponíveis.,False
+3,cartao_premium,produto,Oferta sintética de cartão premium.,False
