@@ -54,6 +54,63 @@ def generate_offer_catalog() -> pd.DataFrame:
     )
 
 
+def compute_reward_probability(row: pd.Series) -> float:
+    base_prob = 0.08
+
+    if row.get("conversao") == "yes":
+        base_prob += 0.12
+
+    if row.get("cliente_ja_contatado", 0) == 1:
+        base_prob += 0.03
+
+    if row.get("resultado_campanha_anterior") == "success":
+        base_prob += 0.10
+
+    if row.get("tipo_contato") == "cellular":
+        base_prob += 0.02
+
+    if row.get("faixa_contatos") in ["1", "2-3"]:
+        base_prob += 0.02
+
+    arm = row.get("arm_name")
+
+    if arm == "educacao_financeira":
+        if row.get("idade", 0) <= 35:
+            base_prob += 0.05
+        if row.get("faixa_contatos") in ["4-5", "6-10", "11-20", "20+"]:
+            base_prob += 0.03
+
+    elif arm == "simulador_credito":
+        if row.get("emprestimo_pessoal") == "yes":
+            base_prob += 0.06
+        if row.get("emprestimo_habitacional") == "yes":
+            base_prob += 0.04
+        if row.get("cliente_ja_contatado", 0) == 1:
+            base_prob += 0.03
+
+    elif arm == "cartao_premium":
+        if row.get("escolaridade") in ["university.degree", "professional.course"]:
+            base_prob += 0.05
+        if row.get("profissao") in ["management", "admin.", "technician"]:
+            base_prob += 0.04
+        if row.get("inadimplencia") == "no":
+            base_prob += 0.03
+
+    elif arm == "sem_oferta":
+        base_prob -= 0.03
+
+    channel = row.get("channel")
+
+    if channel == "app":
+        base_prob += 0.02
+    elif channel == "whatsapp":
+        base_prob += 0.015
+    elif channel == "email":
+        base_prob += 0.005
+
+    return float(min(max(base_prob, 0.01), 0.85))
+
+
 def generate_offer_events(df: pd.DataFrame) -> pd.DataFrame:
     rng = np.random.default_rng(RANDOM_SEED)
     events = df.copy()
@@ -66,10 +123,14 @@ def generate_offer_events(df: pd.DataFrame) -> pd.DataFrame:
 
     events["channel"] = rng.choice(CHANNELS, size=len(events))
 
-    events["reward"] = (
-        events["conversao"]
-        .map({"yes": 1, "no": 0})
-        .astype(int)
+    events["reward_probability"] = events.apply(
+        compute_reward_probability,
+        axis=1,
+    )
+
+    events["reward"] = rng.binomial(
+        n=1,
+        p=events["reward_probability"],
     )
 
     events["occurred_at"] = pd.date_range(
@@ -85,6 +146,7 @@ def generate_offer_events(df: pd.DataFrame) -> pd.DataFrame:
         "channel",
         "arm_id",
         "arm_name",
+        "reward_probability",
         "reward",
     ]
 
@@ -104,6 +166,7 @@ def generate_delayed_rewards(offer_events: pd.DataFrame) -> pd.DataFrame:
             "channel",
             "arm_id",
             "arm_name",
+            "reward_probability",
             "reward",
         ]
     ].copy()
@@ -152,6 +215,7 @@ def main() -> None:
     print(f"- {OUTPUT_DIR / 'offer_events.csv'}")
     print(f"- {OUTPUT_DIR / 'delayed_rewards.csv'}")
     print(f"Total de eventos gerados: {len(offer_events)}")
+    print(f"Reward médio sintético: {offer_events['reward'].mean():.2%}")
 
 
 if __name__ == "__main__":
