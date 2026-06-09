@@ -350,9 +350,9 @@ uvicorn src.datathon_offerexp.app:app --reload
 | ------------------------ | ------ |
 | Organização do Projeto   | ✅     |
 | Base Kaggle + EDA        | ✅     |
-| Enriquecimento Sintético | ⏳      |
-| Thompson Sampling        | ⏳      |
-| Avaliação Offline        | ⏳      |
+| Enriquecimento Sintético | ✅     |
+| Thompson Sampling        | ✅     |
+| Avaliação Offline        | ✅     |
 | API e Logs               | ⏳      |
 | Azure                    | ⏳      |
 | MLOps                    | ⏳      |
