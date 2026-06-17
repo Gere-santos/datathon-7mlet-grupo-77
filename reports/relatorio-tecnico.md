@@ -67,7 +67,7 @@ A base Kaggle foi usada como referência factual para construir uma **camada sin
 |---------|---------|
 | `data/synthetic_enrichment/offer_catalog.csv` | Catálogo dos 4 braços de oferta |
 | `data/synthetic_enrichment/offer_events.csv` | Eventos de impressão com contexto e recompensa |
-| `data/synthetic_enrichment/delayed_rewards.csv` | Recompensas com horizonte temporal de 0–7 dias |
+| `data/synthetic_enrichment/delayed_rewards.csv` | Recompensas com atraso uniforme: [1–14] dias (conversão) / [1–7] dias (não-conversão) |
 
 ### 3.2 Catálogo de braços (ofertas)
 
@@ -82,7 +82,11 @@ A taxa base intencional é próxima entre braços para refletir o desafio real d
 
 ### 3.3 Modelagem de delayed rewards
 
-Recompensas atrasadas foram modeladas com horizonte de 0–7 dias usando distribuição exponencial (λ=2), simulando o tempo entre apresentação da oferta e confirmação de conversão em canais digitais. O arquivo `delayed_rewards.csv` contém `event_id`, `reward_timestamp` e `delay_days` para cada evento.
+Recompensas atrasadas foram modeladas com distribuição uniforme discreta independente por resultado:
+- **Conversão** (`reward=1`): atraso uniforme em **[1, 14] dias** — simula o tempo até confirmação do produto.
+- **Não-conversão** (`reward=0`): atraso uniforme em **[1, 7] dias** — ausência de resposta detectada mais rapidamente.
+
+O arquivo `delayed_rewards.csv` contém `event_id`, `reward_observed_at` e `delay_days` para cada evento. Semente `RANDOM_SEED=42` garante reprodutibilidade. Detalhes em `data/synthetic_enrichment/README.md`.
 
 ### 3.4 Hipóteses de geração
 
@@ -139,7 +143,7 @@ Ao inicializar o sistema (α=1, β=1 para todos os braços), Thompson Sampling s
 
 ### 4.5 Tratamento de recompensas atrasadas
 
-Na implementação atual (v1), o update é sincrônico: a política só é atualizada ao receber o `POST /reward`. A API mantém um dicionário `_pending` que associa `event_id` ao braço selecionado, permitindo que rewards sejam registrados com atraso. Na arquitetura Azure, o Azure Service Bus desacopla o recebimento da reward do update do estado, garantindo que rewards atrasados de até 7 dias sejam processados corretamente.
+Na implementação atual (v1), o update é sincrônico: a política só é atualizada ao receber o `POST /reward`. A API mantém um dicionário `_pending` que associa `event_id` ao braço selecionado, permitindo que rewards sejam registrados com atraso. Na arquitetura Azure, o Azure Service Bus desacopla o recebimento da reward do update do estado, garantindo que rewards atrasados de até 14 dias sejam processados corretamente.
 
 ---
 
