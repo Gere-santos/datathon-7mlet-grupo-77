@@ -209,7 +209,7 @@ O módulo `assistant.py` expõe um assistente com três funções:
 - `explain_decision()`: explica em português por que determinada oferta foi selecionada.
 - `summarize_experiment()`: resume métricas de um experimento.
 
-Suporta Anthropic Claude (`ANTHROPIC_API_KEY`) ou Azure OpenAI (`AZURE_OPENAI_ENDPOINT`) com fallback para modo offline (stub) quando nenhuma chave está configurada.
+Em produção usa **Azure OpenAI Service** (`LLM_PROVIDER=azure_openai`, padrão). Para desenvolvimento local sem deployment Azure, a variável `LLM_PROVIDER=anthropic` ativa o cliente Anthropic como alternativa. Quando nenhuma chave está configurada, o módulo entra em modo offline (stub) — sempre importável sem erro.
 
 ---
 

@@ -88,11 +88,21 @@ Método de avaliação: **Replayer Offline** (Li et al., 2011) — garante estim
 
 ---
 
-## Considerações de Fairness
+## Análise de Fairness
 
-- Monitored: taxa de seleção por braço entre segmentos (idade, profissão).
-- Os braços não são discriminatórios por natureza — oferecem conteúdo ou produtos financeiros amplos.
-- Não há braço que exclua ou penalize grupos protegidos.
+- Taxa de seleção por braço é monitorada entre segmentos demográficos (idade, profissão, estado civil).
+- Os braços não são definidos por características protegidas — oferecem conteúdo ou produtos financeiros amplos acessíveis a qualquer perfil.
+- Guardrail de suitability: menores de 18 anos recebem automaticamente `sem_oferta`; clientes em inadimplência não recebem `cartao_premium`. Esses guardrails são logados e auditáveis.
+- Métrica de fairness monitorada: Δ taxa de seleção por braço entre faixas etárias deve ser < 10 pontos percentuais.
+
+## Vieses Conhecidos
+
+| Viés | Descrição | Mitigação |
+|------|-----------|-----------|
+| **Prior uniforme** | Beta(1,1) favorece exploração inicial igual — mas o primeiro braço a receber reward=1 no cold-start tem vantagem momentânea | Superado após ~20 rodadas (convergência demonstrada no Notebook 07) |
+| **Taxa sintética quase-uniforme** | As taxas reais dos 4 braços são muito próximas (~11%), tornando o sinal ruidoso — Thompson pode levar centenas de rounds para distinguir o vencedor | Documentado como limitação; aceitável no MVP sintético |
+| **Viés de canal** | Dataset Kaggle tem 2× mais conversões por `cellular` que `telephone` — distribuição de canais nos eventos sintéticos herda esse viés | Canal é feature de contexto, não influencia a seleção do braço diretamente |
+| **Ausência de feedback negativo explícito** | reward=0 pode representar "não respondeu" ou "respondeu e rejeitou" — o modelo trata ambos como não-conversão | Limitação conhecida da modelagem Bernoulli simples; tratamento diferenciado requer dados rotulados |
 
 ---
 

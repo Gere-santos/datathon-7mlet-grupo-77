@@ -93,6 +93,55 @@ Logs são imutáveis (JSONL append-only). Correções são registradas como novo
 
 ---
 
+## Atributos Protegidos (LGPD art. 5, II)
+
+Os seguintes atributos são considerados **dados sensíveis** pela LGPD e o sistema trata sua ausência como requisito de design:
+
+| Atributo | Presente no sistema? | Tratamento |
+|----------|---------------------|------------|
+| Raça / etnia | ❌ Não coletado | Não está no dataset Kaggle nem nos eventos sintéticos |
+| Religião / opinião política | ❌ Não coletado | Fora do escopo de qualquer feature |
+| Saúde / vida sexual | ❌ Não coletado | Fora do escopo |
+| Dado genético / biométrico | ❌ Não coletado | Fora do escopo |
+| Filiação sindical | ❌ Não coletado | Fora do escopo |
+| **Idade** | ✅ Presente (`idade`) | Usada apenas para guardrail de suitability (< 18 → `sem_oferta`). Não é usada para discriminar grupos nem para seleção de braço |
+| **Profissão** | ✅ Presente (`profissao`) | Feature de contexto para auditoria de fairness. Não determina diretamente o braço selecionado |
+| **Estado civil** | ✅ Presente (`estado_civil`) | Monitorada para detecção de viés. Não influencia seleção |
+
+> A versão `thompson-v1` é **não-contextual** — nenhum atributo do cliente é usado para selecionar o braço. Atributos são coletados exclusivamente para auditoria e monitoramento de fairness.
+
+## Política de Logs e Telemetria
+
+### O que é registrado
+
+| Campo | Arquivo | Finalidade | Exemplo |
+|-------|---------|-----------|---------|
+| `event_id` | `decision_log.jsonl` | Rastreabilidade da decisão | `"evt_00001"` |
+| `subject_key` | `decision_log.jsonl` | Identificador pseudoanonimizado do cliente | `"subj_8a3f"` (hash, não nome/CPF) |
+| `arm_id` / `arm_name` | `decision_log.jsonl` | Oferta apresentada | `3, "cartao_premium"` |
+| `reward` | `decision_log.jsonl` | Resultado da interação | `1` ou `0` |
+| `policy_version` | `decision_log.jsonl` | Versão da política em vigor | `"thompson-v1"` |
+| `reason_codes` | `decision_log.jsonl` | Explicabilidade da decisão | `["thompson_sample_arm_3"]` |
+| `timestamp` | `decision_log.jsonl` | Momento da decisão (UTC) | `"2025-06-01T10:00:00Z"` |
+| Latência, status HTTP | Azure Monitor | Observabilidade técnica | TTL: 90 dias |
+
+### O que NÃO é registrado
+
+- Nome, CPF, e-mail, endereço, telefone do cliente.
+- Dados bancários (saldo, renda, histórico de crédito).
+- Dados sensíveis (saúde, raça, religião — LGPD art. 5, II).
+- Conteúdo das interações com o assistente LLM (apenas metadados: timestamp, duração).
+- IP do cliente (se implementado em produção, hash unidirecional antes do log).
+
+### Sanitização antes do log
+
+Antes de persistir qualquer evento, o pipeline verifica:
+1. `subject_key` é hash SHA-256 do identificador real — valor original nunca persiste.
+2. Campos de contexto são limitados ao whitelist: `idade`, `profissao`, `estado_civil`, `escolaridade`, `cliente_ja_contatado`, `faixa_contatos`, `canal`.
+3. Campos extras na requisição são descartados silenciosamente (Pydantic `extra='ignore'`).
+
+---
+
 ## Transferência Internacional
 
 Dados não são transferidos internacionalmente na arquitetura atual. Em caso de uso de APIs externas (Azure OpenAI), aplicam-se as garantias do DPA da Microsoft com cláusulas contratuais padrão (SCCs).
