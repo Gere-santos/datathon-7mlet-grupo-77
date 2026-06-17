@@ -207,10 +207,130 @@ Service Bus → Worker → Cosmos DB (atualizar α,β)
 
 ---
 
+## Plano de Deploy
+
+### Pipeline CI/CD
+
+```
+GitHub (branch main)
+    │
+    ▼ push / PR merge
+GitHub Actions — CI
+    ├── pytest (69 testes)
+    ├── ruff (lint)
+    └── mypy (type-check)
+    │
+    ▼ aprovado
+GitHub Actions — CD
+    ├── docker build + push → Azure Container Registry
+    └── az containerapp update → Azure Container Apps
+              (rolling update — zero downtime)
+```
+
+### Estratégia de Rollout
+
+| Fase | Tráfego | Critério de avanço |
+|---|---|---|
+| **Canary** | 10% | Latência p95 < 200ms, error rate < 1% por 30 min |
+| **Staged** | 50% | Reward médio do novo modelo ≥ baseline por 2h |
+| **Full** | 100% | Nenhum alerta ativo no Azure Monitor |
+
+### Rollback
+
+```bash
+# Reverter para a revisão anterior do Container App
+az containerapp revision list --name offerexp-api --resource-group offerexp-rg
+az containerapp ingress traffic set --name offerexp-api \
+  --resource-group offerexp-rg \
+  --revision-weight <revision-anterior>=100
+```
+
+O estado do bandit (α, β) no Cosmos DB **não é afetado** pelo rollback da API — os parâmetros são persistentes e independentes da versão do código.
+
+---
+
+## Plano de Gestão de Segredos e Credenciais
+
+### Princípio
+
+Nenhuma credencial é armazenada em código, imagem Docker ou variável de ambiente em texto claro. Todo acesso a serviços Azure usa **Managed Identity** (sem chave); segredos de terceiros (Anthropic, Azure OpenAI) ficam no **Azure Key Vault**.
+
+### Mapeamento: `.env.example` → Azure
+
+| Variável (local) | Mecanismo Azure | Observação |
+|---|---|---|
+| `AZURE_OPENAI_API_KEY` | Key Vault secret: `offerexp-aoai-key` | Rotação automática via APIM |
+| `AZURE_OPENAI_ENDPOINT` | Key Vault secret: `offerexp-aoai-endpoint` | Referenciado como `secretref` no Container App |
+| `AZURE_OPENAI_DEPLOYMENT` | Variável de ambiente não-secreta | Definida no manifesto do Container App |
+| `ANTHROPIC_API_KEY` | Key Vault secret: `offerexp-anthropic-key` | Apenas em ambientes sem Azure OpenAI |
+| `LLM_PROVIDER` | Variável de ambiente não-secreta | `"azure_openai"` em produção |
+| `AZURE_COSMOS_KEY` | **Não usado** — substituído por Managed Identity | Container App recebe role `Cosmos DB Built-in Data Contributor` |
+| `AZURE_COSMOS_ENDPOINT` | Variável de ambiente não-secreta | Endpoint público sem credencial |
+| `AZURE_STORAGE_CONNECTION_STRING` | **Não usado** — substituído por Managed Identity | Container App recebe role `Storage Blob Data Contributor` |
+| `MLFLOW_TRACKING_URI` | Variável de ambiente não-secreta | URI do Azure ML Workspace |
+| `DECISION_LOG_PATH` | Variável de ambiente não-secreta | Caminho no Blob (montado via FUSE ou SDK) |
+
+### Configuração da Managed Identity
+
+```bash
+# 1. Criar User-Assigned Managed Identity
+az identity create --name offerexp-identity --resource-group offerexp-rg
+
+# 2. Atribuir ao Container App
+az containerapp identity assign \
+  --name offerexp-api --resource-group offerexp-rg \
+  --user-assigned offerexp-identity
+
+# 3. Dar permissão de leitura ao Key Vault
+az keyvault set-policy --name offerexp-kv \
+  --object-id <identity-principal-id> \
+  --secret-permissions get list
+
+# 4. Dar permissão ao Cosmos DB (sem chave)
+az cosmosdb sql role assignment create \
+  --account-name offerexp-cosmos \
+  --resource-group offerexp-rg \
+  --role-definition-name "Cosmos DB Built-in Data Contributor" \
+  --principal-id <identity-principal-id> \
+  --scope "/"
+
+# 5. Dar permissão ao Blob Storage (sem connection string)
+az role assignment create \
+  --assignee <identity-principal-id> \
+  --role "Storage Blob Data Contributor" \
+  --scope /subscriptions/<sub>/resourceGroups/offerexp-rg/providers/Microsoft.Storage/storageAccounts/offerexpstorage
+```
+
+### Referenciando Key Vault no Container App
+
+```bash
+# Adicionar segredo referenciando Key Vault (sem copiar o valor)
+az containerapp secret set \
+  --name offerexp-api --resource-group offerexp-rg \
+  --secrets "aoai-key=keyvaultref:https://offerexp-kv.vault.azure.net/secrets/offerexp-aoai-key,identityref:<identity-resource-id>"
+
+# Injetar como variável de ambiente
+az containerapp update \
+  --name offerexp-api --resource-group offerexp-rg \
+  --set-env-vars "AZURE_OPENAI_API_KEY=secretref:aoai-key"
+```
+
+### Rotação de Segredos
+
+| Segredo | Frequência | Responsável |
+|---|---|---|
+| `AZURE_OPENAI_API_KEY` | 90 dias | Azure Key Vault auto-rotation |
+| `ANTHROPIC_API_KEY` | 90 dias | Manual via Key Vault + alerta de expiração |
+| Managed Identity tokens | Automático | Azure AD (tokens com TTL de 24h) |
+
+---
+
 ## Considerações de Segurança
 
 - Toda comunicação interna via **HTTPS/TLS 1.3**.
 - API Management com autenticação **OAuth2 + JWT**.
-- Cosmos DB e Blob acessados via **Managed Identity** (sem credenciais hardcoded).
-- Segredos no **Azure Key Vault** com rotação automática.
+- Cosmos DB e Blob acessados via **Managed Identity** — sem credenciais hardcoded.
+- Segredos de terceiros no **Azure Key Vault** com rotação automática a cada 90 dias.
 - Logs de auditoria retidos por 5 anos em Blob imutável (WORM policy).
+- Imagens Docker escaneadas via **Microsoft Defender for Containers** no ACR.
+- Nenhuma variável do `.env.example` com valor real é commitada no repositório (coberta pelo `.gitignore`).
