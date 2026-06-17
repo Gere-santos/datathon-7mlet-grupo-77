@@ -1,0 +1,283 @@
+{
+  "generated_at": "2026-06-16T22:38:53.727656",
+  "policy_version": "thompson-v1",
+  "n_windows": 8,
+  "window_size_rounds": 1271,
+  "global_metrics": {
+    "avg_reward": 0.111,
+    "final_regret": 77.86,
+    "best_arm_pct": 26.15,
+    "total_rounds": 10172
+  },
+  "thresholds": {
+    "reward_minimo": 0.1144,
+    "queda_reward_pct": 15.0,
+    "exploracao_minima_pct": 5.0,
+    "regret_crescimento_pct": 20.0
+  },
+  "window_stats": [
+    {
+      "janela": "W1",
+      "avg_reward": 0.0275,
+      "regret_final": 115.8,
+      "queda_pct": 0.0,
+      "alerta_reward": false
+    },
+    {
+      "janela": "W2",
+      "avg_reward": 0.0354,
+      "regret_final": 211.6,
+      "queda_pct": -28.57,
+      "alerta_reward": false
+    },
+    {
+      "janela": "W3",
+      "avg_reward": 0.043,
+      "regret_final": 288.4,
+      "queda_pct": -21.48,
+      "alerta_reward": false
+    },
+    {
+      "janela": "W4",
+      "avg_reward": 0.0476,
+      "regret_final": 361.19,
+      "queda_pct": -10.67,
+      "alerta_reward": false
+    },
+    {
+      "janela": "W5",
+      "avg_reward": 0.0486,
+      "regret_final": 444.99,
+      "queda_pct": -2.15,
+      "alerta_reward": false
+    },
+    {
+      "janela": "W6",
+      "avg_reward": 0.0649,
+      "regret_final": 409.79,
+      "queda_pct": -33.5,
+      "alerta_reward": false
+    },
+    {
+      "janela": "W7",
+      "avg_reward": 0.0663,
+      "regret_final": 465.59,
+      "queda_pct": -2.16,
+      "alerta_reward": false
+    },
+    {
+      "janela": "W8",
+      "avg_reward": 0.111,
+      "regret_final": 77.86,
+      "queda_pct": -67.37,
+      "alerta_reward": false
+    }
+  ],
+  "arm_distribution": {
+    "W1": {
+      "sem_oferta": 23.45,
+      "educacao_financeira": 29.82,
+      "simulador_credito": 12.59,
+      "cartao_premium": 34.15
+    },
+    "W2": {
+      "sem_oferta": 5.19,
+      "educacao_financeira": 16.13,
+      "simulador_credito": 37.14,
+      "cartao_premium": 41.54
+    },
+    "W3": {
+      "sem_oferta": 1.1,
+      "educacao_financeira": 11.01,
+      "simulador_credito": 59.4,
+      "cartao_premium": 28.48
+    },
+    "W4": {
+      "sem_oferta": 0.24,
+      "educacao_financeira": 14.0,
+      "simulador_credito": 35.88,
+      "cartao_premium": 49.88
+    },
+    "W5": {
+      "sem_oferta": 0.0,
+      "educacao_financeira": 15.26,
+      "simulador_credito": 50.75,
+      "cartao_premium": 33.99
+    },
+    "W6": {
+      "sem_oferta": 0.0,
+      "educacao_financeira": 62.31,
+      "simulador_credito": 16.44,
+      "cartao_premium": 21.24
+    },
+    "W7": {
+      "sem_oferta": 0.0,
+      "educacao_financeira": 100.0,
+      "simulador_credito": 0.0,
+      "cartao_premium": 0.0
+    },
+    "W8": {
+      "sem_oferta": 0.0,
+      "educacao_financeira": 100.0,
+      "simulador_credito": 0.0,
+      "cartao_premium": 0.0
+    }
+  },
+  "alerts": [
+    {
+      "tipo": "A1 — Reward abaixo do mínimo",
+      "janela": "W1",
+      "valor": "0.0275",
+      "threshold": "> 0.1144",
+      "severidade": "ALTA"
+    },
+    {
+      "tipo": "A1 — Reward abaixo do mínimo",
+      "janela": "W2",
+      "valor": "0.0354",
+      "threshold": "> 0.1144",
+      "severidade": "ALTA"
+    },
+    {
+      "tipo": "A1 — Reward abaixo do mínimo",
+      "janela": "W3",
+      "valor": "0.0430",
+      "threshold": "> 0.1144",
+      "severidade": "ALTA"
+    },
+    {
+      "tipo": "A1 — Reward abaixo do mínimo",
+      "janela": "W4",
+      "valor": "0.0476",
+      "threshold": "> 0.1144",
+      "severidade": "ALTA"
+    },
+    {
+      "tipo": "A1 — Reward abaixo do mínimo",
+      "janela": "W5",
+      "valor": "0.0486",
+      "threshold": "> 0.1144",
+      "severidade": "ALTA"
+    },
+    {
+      "tipo": "A1 — Reward abaixo do mínimo",
+      "janela": "W6",
+      "valor": "0.0649",
+      "threshold": "> 0.1144",
+      "severidade": "ALTA"
+    },
+    {
+      "tipo": "A1 — Reward abaixo do mínimo",
+      "janela": "W7",
+      "valor": "0.0663",
+      "threshold": "> 0.1144",
+      "severidade": "ALTA"
+    },
+    {
+      "tipo": "A1 — Reward abaixo do mínimo",
+      "janela": "W8",
+      "valor": "0.1110",
+      "threshold": "> 0.1144",
+      "severidade": "ALTA"
+    },
+    {
+      "tipo": "A3 — Exploração mínima violada",
+      "janela": "W3",
+      "valor": "sem_oferta: 1.1%",
+      "threshold": ">= 5.0%",
+      "severidade": "BAIXA"
+    },
+    {
+      "tipo": "A3 — Exploração mínima violada",
+      "janela": "W4",
+      "valor": "sem_oferta: 0.2%",
+      "threshold": ">= 5.0%",
+      "severidade": "BAIXA"
+    },
+    {
+      "tipo": "A3 — Exploração mínima violada",
+      "janela": "W5",
+      "valor": "sem_oferta: 0.0%",
+      "threshold": ">= 5.0%",
+      "severidade": "BAIXA"
+    },
+    {
+      "tipo": "A3 — Exploração mínima violada",
+      "janela": "W6",
+      "valor": "sem_oferta: 0.0%",
+      "threshold": ">= 5.0%",
+      "severidade": "BAIXA"
+    },
+    {
+      "tipo": "A3 — Exploração mínima violada",
+      "janela": "W7",
+      "valor": "sem_oferta: 0.0%",
+      "threshold": ">= 5.0%",
+      "severidade": "BAIXA"
+    },
+    {
+      "tipo": "A3 — Exploração mínima violada",
+      "janela": "W7",
+      "valor": "simulador_credito: 0.0%",
+      "threshold": ">= 5.0%",
+      "severidade": "BAIXA"
+    },
+    {
+      "tipo": "A3 — Exploração mínima violada",
+      "janela": "W7",
+      "valor": "cartao_premium: 0.0%",
+      "threshold": ">= 5.0%",
+      "severidade": "BAIXA"
+    },
+    {
+      "tipo": "A3 — Exploração mínima violada",
+      "janela": "W8",
+      "valor": "sem_oferta: 0.0%",
+      "threshold": ">= 5.0%",
+      "severidade": "BAIXA"
+    },
+    {
+      "tipo": "A3 — Exploração mínima violada",
+      "janela": "W8",
+      "valor": "simulador_credito: 0.0%",
+      "threshold": ">= 5.0%",
+      "severidade": "BAIXA"
+    },
+    {
+      "tipo": "A3 — Exploração mínima violada",
+      "janela": "W8",
+      "valor": "cartao_premium: 0.0%",
+      "threshold": ">= 5.0%",
+      "severidade": "BAIXA"
+    },
+    {
+      "tipo": "A4 — Crescimento de regret acelerado",
+      "janela": "W2",
+      "valor": "+82.7%",
+      "threshold": "< 20.0%",
+      "severidade": "MÉDIA"
+    },
+    {
+      "tipo": "A4 — Crescimento de regret acelerado",
+      "janela": "W3",
+      "valor": "+36.3%",
+      "threshold": "< 20.0%",
+      "severidade": "MÉDIA"
+    },
+    {
+      "tipo": "A4 — Crescimento de regret acelerado",
+      "janela": "W4",
+      "valor": "+25.2%",
+      "threshold": "< 20.0%",
+      "severidade": "MÉDIA"
+    },
+    {
+      "tipo": "A4 — Crescimento de regret acelerado",
+      "janela": "W5",
+      "valor": "+23.2%",
+      "threshold": "< 20.0%",
+      "severidade": "MÉDIA"
+    }
+  ],
+  "status": "ALERTA"
+}
