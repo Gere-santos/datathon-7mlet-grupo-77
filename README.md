@@ -162,30 +162,57 @@ datathon-7mlet-grupo-77/
 ├── data/
 │   ├── kaggle/
 │   │   └── README.md
-│   ├── processed/
 │   ├── synthetic_enrichment/
+│   │   ├── offer_catalog.csv
+│   │   ├── offer_events.csv
+│   │   ├── delayed_rewards.csv
+│   │   └── generate_synthetic_data.py
 │   └── golden_set/
+│       └── evaluation_cases.jsonl     # 25 casos de teste
 ├── docs/
-│   ├── architecture-azure.md
-│   ├── model-card.md
-│   ├── system-card.md
-│   └── lgpd-plan.md
+│   ├── architecture-azure.md          # diagrama Mermaid + custo Azure
+│   ├── model-card.md                  # limitações, fairness, rastreabilidade
+│   ├── system-card.md                 # riscos, cenários adversariais
+│   ├── lgpd-plan.md                   # conformidade LGPD
+│   └── mlops-lifecycle.md             # canary deploy, rollback, human-in-the-loop
 ├── notebooks/
-│   └── 01-eda-e-baseline.ipynb
+│   ├── 01-eda-e-baseline.ipynb        # EDA + baseline estatístico
+│   ├── 02-synthetic-enrichment.ipynb  # geração de dados sintéticos
+│   ├── 03-baseline.ipynb              # políticas Random e Greedy
+│   ├── 04-thompson-sampling.ipynb     # Thompson Sampling Beta conjugado
+│   ├── 05-offline-evaluation.ipynb    # Replayer Method + golden set
+│   ├── 06-mlflow-experiments.ipynb    # experimentos multi-seed + Model Registry
+│   ├── 07-nilos-ucb-fairness.ipynb    # Nilos-UCB, cold-start, fairness
+│   ├── 08-mlops-promotion-demo.ipynb  # promoção, gate check, rollback
+│   ├── 09-monitoring-dashboard.ipynb  # drift, alertas, dashboard
+│   └── 10-banca-demo.ipynb            # demonstração ponta a ponta para banca
 ├── reports/
-│   └── data-generation.md
+│   ├── data-generation.md
+│   ├── relatorio-tecnico.md           # relatório técnico completo
+│   ├── golden_set_results.json
+│   ├── promotion_record.json
+│   ├── retrain_record.json
+│   ├── monitoring_report.json
+│   └── *.png                          # gráficos gerados pelos notebooks
+├── scripts/
+│   ├── run_golden_set.py              # avaliação offline reproduzível (CLI)
+│   └── run_demo.sh                    # pipeline ponta a ponta (make demo)
 ├── src/
 │   └── datathon_offerexp/
 │       ├── __init__.py
-│       ├── contracts.py
-│       ├── policies.py
-│       ├── evaluation.py
-│       ├── decision_log.py
-│       └── app.py
+│       ├── contracts.py               # Pydantic v2: DecisionRequest/Response
+│       ├── policies.py                # Random, Greedy, ThompsonSampling
+│       ├── evaluation.py              # Replayer Method, compute_regret
+│       ├── decision_log.py            # log auditável JSONL append-only
+│       ├── mlflow_utils.py            # rastreamento SQLite backend
+│       ├── assistant.py               # assistente LLM (Anthropic / Azure / stub)
+│       └── app.py                     # FastAPI: /decide /reward /stats /health
 └── tests/
-    ├── test_contracts.py
-    ├── test_policies.py
-    └── test_decision_log.py
+    ├── test_contracts.py              # contratos Pydantic
+    ├── test_policies.py               # políticas de decisão
+    ├── test_decision_log.py           # log auditável
+    ├── test_mlflow_utils.py           # rastreamento MLflow
+    └── test_assistant.py              # assistente LLM
 ```
 
 ---
