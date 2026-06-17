@@ -92,11 +92,19 @@ Seed 42 fixada em todos os componentes para reprodutibilidade total.
 |--------|------|-----------|
 | `delay_days` | int | Atraso em dias até observação da recompensa |
 | `reward_observed_at` | datetime | Timestamp da observação real |
-| `reward_type` | string | conversao_observada / sem_conversao_observada |
-| `reward_status` | string | converted / not_converted |
+| `reward_type` | string | `conversao_confirmada` / `sem_conversao_observada` |
+| `reward_status` | string | `confirmed` / `not_converted` |
 
-**Modelagem do atraso**: distribuição triangular (mínimo=0, moda=3, máximo=14 dias).  
-**Horizonte temporal**: 14 dias. Recompensas além desse prazo são tratadas como não-conversão.
+**Modelagem do atraso**: distribuição uniforme discreta independente por resultado.
+- Conversão (`reward=1`): atraso uniforme em **[1, 14] dias** — `rng.integers(1, 15)`.
+- Não-conversão (`reward=0`): atraso uniforme em **[1, 7] dias** — `rng.integers(1, 8)`.
+
+O atraso menor para não-conversões reflete a hipótese de que a ausência de resposta
+tende a ser observada mais rapidamente do que a confirmação de uma conversão.
+
+**Semente**: `RANDOM_SEED = 42` (mesma do gerador de eventos).  
+**Horizonte efetivo**: 14 dias (máximo de `delay_days`). Todos os eventos têm
+`reward_observed_at` determinístico — não há censura por horizonte nesta versão.
 
 ---
 
