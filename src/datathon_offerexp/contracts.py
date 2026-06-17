@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class DecisionRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
     event_id: str
-    subject_key: str
+    subject_key: str = "anon"
     context: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -21,9 +23,11 @@ class DecisionResponse(BaseModel):
 
 
 class RewardUpdate(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
     event_id: str
     arm_id: int
-    reward: float
+    reward: float = Field(ge=0.0, le=1.0)
 
 
 class ArmStats(BaseModel):

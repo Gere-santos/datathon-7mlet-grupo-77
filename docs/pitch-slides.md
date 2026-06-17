@@ -139,16 +139,18 @@ make serve          # FastAPI em localhost:8000
 ```bash
 curl -s -X POST localhost:8000/decide \
   -H "Content-Type: application/json" \
-  -d '{"event_id": "demo-01", "context": {"profissao": "admin"}}'
+  -d '{"event_id": "demo-01", "subject_key": "cliente-42",
+       "context": {"profissao": "admin", "idade": 35}}'
 ```
 ```json
 { "arm_name": "cartao_premium", "reason_codes": ["thompson_sample_arm_3"],
   "policy_version": "thompson-v1" }
 ```
 
-**3. Registrar reward**
+**3. Registrar reward** (dias depois)
 ```bash
 curl -s -X POST localhost:8000/reward \
+  -H "Content-Type: application/json" \
   -d '{"event_id": "demo-01", "arm_id": 3, "reward": 1}'
 ```
 
@@ -156,6 +158,8 @@ curl -s -X POST localhost:8000/reward \
 ```bash
 curl -s localhost:8000/stats | python3 -m json.tool
 ```
+
+> **Plano de contingência**: se a rede falhar → próximo slide mostra o output esperado de cada chamada
 
 ---
 
@@ -187,22 +191,37 @@ usando apenas eventos com braço matching.
 
 ---
 
-# Arquitetura Azure
+# Arquitetura Azure — Serviços e Alternativas Descartadas
 
-<br>
+| Camada | Serviço escolhido | Alternativa descartada | Por quê |
+|--------|------------------|----------------------|---------|
+| Compute | Container Apps | AKS | Sem overhead de orquestração no MVP |
+| Estado | Cosmos DB | Azure SQL | Latência < 10ms; SQL requer índice |
+| Mensageria | Service Bus | Event Hubs | Exactly-once delivery para rewards |
+| LLM | Azure OpenAI | Anthropic direto | Dados dentro do boundary Azure (LGPD) |
+| Segredos | Key Vault + MI | Env vars hardcoded | Zero credenciais no código |
 
-| Camada | Serviço | Decisão |
-|--------|---------|---------|
-| API / Gateway | API Management | Rate limiting, OAuth2 |
-| Compute | Container Apps | Zero-downtime, autoscale |
-| Estado bandit | Cosmos DB | Latência < 10ms para α, β |
-| Logs auditáveis | Blob Storage (WORM) | Imutável, 5 anos |
-| Delayed rewards | Service Bus | Exactly-once delivery |
-| MLOps | Azure ML + MLflow | Tracking, model registry |
-| IA / Explicabilidade | Azure OpenAI GPT-4o | Assistente em PT |
-| Segredos | Key Vault + Managed Identity | Zero credenciais hardcoded |
+> Fronteiras: todo tráfego permanece no boundary Azure (East US 2 / Brazil South)
+> Detalhes completos e diagrama: `docs/architecture-azure.md`
 
-**Custo estimado (dev/staging): ~US$ 76/mês**
+---
+
+# FinOps — Custo, ROI e Cenários de Escala
+
+| Serviço | Dev (~$76/mês) | Produção (~$350/mês) | Otimização |
+|---------|---------------|---------------------|-----------|
+| Container Apps | $15 (0.5 vCPU) | $80 (3 réplicas) | Scale-to-zero off-peak → −40% |
+| Cosmos DB | $5 serverless | $50 provisioned | 400 RU/s a partir de 1M req/dia |
+| Service Bus | $10 standard | $25 premium | Premium só com SLA 99.9% exigido |
+| Azure ML | $30 básico | $120 dedicado | Desligar compute entre treinos → $0/h |
+| Azure OpenAI | $15 mini | $75 GPT-4o | Prompt caching reduz até 60% |
+
+**ROI do Thompson Sampling**
+- Baseline Random: ~11,0% · Thompson Sampling: ~11,8% → **+7% de conversão**
+- 1 M interações/mês · ticket médio R$ 50 → **+R$ 3,5 M/ano** em receita adicional
+- Break-even da infraestrutura: **< 1 dia** de operação em produção
+
+**TCO**: infra + ~0,5 FTE/mês MLOps + ~0,2 FTE/mês analytics ≈ R$ 60k/ano
 
 ---
 

@@ -34,6 +34,34 @@ _policy = ThompsonSamplingPolicy()
 _log = DecisionLog("logs/decision_log.jsonl")
 _pending: dict[str, int] = {}  # event_id → arm_id awaiting reward
 
+_ARM_SEM_OFERTA = 0
+_ARM_CARTAO_PREMIUM = 3
+
+
+def _apply_guardrails(context: dict, arm_idx: int) -> tuple[int, list[str]]:
+    """Suitability guardrails — returns (final_arm_idx, guardrail_reason_codes).
+
+    Rules documented in docs/system-card.md § Cenários de Risco:
+    - age < 18 → sem_oferta (regulatory: minors cannot receive financial products)
+    - inadimplencia=yes → block cartao_premium (credit risk suitability)
+    - faixa_contatos=20+ → sem_oferta (contact fatigue / LGPD art. 6 necessidade)
+    """
+    idade = context.get("idade")
+    if idade is not None:
+        try:
+            if int(idade) < 18:
+                return _ARM_SEM_OFERTA, ["guardrail_age_under_18"]
+        except (ValueError, TypeError):
+            pass
+
+    if context.get("inadimplencia") in ("yes", True, "true", 1) and arm_idx == _ARM_CARTAO_PREMIUM:
+        return _ARM_SEM_OFERTA, ["guardrail_inadimplencia_cartao_premium"]
+
+    if context.get("faixa_contatos") == "20+":
+        return _ARM_SEM_OFERTA, ["guardrail_contact_fatigue_20plus"]
+
+    return arm_idx, []
+
 
 def _ensure_run() -> None:
     global _active_run
@@ -63,11 +91,12 @@ def health() -> dict:
 @app.post("/decide", response_model=DecisionResponse)
 def decide(request: DecisionRequest) -> DecisionResponse:
     arm_idx = _policy.select_arm()
+    arm_idx, guardrail_codes = _apply_guardrails(request.context, arm_idx)
     arm = OFFER_CATALOG[arm_idx]
 
     arm_stats = {s["arm_id"]: s for s in _policy.stats()}
     s = arm_stats[arm_idx]
-    reason = [
+    reason = guardrail_codes or [
         f"thompson_sample_arm_{arm_idx}",
         f"alpha={s.get('alpha', 1):.1f}",
         f"beta={s.get('beta', 1):.1f}",
