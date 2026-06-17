@@ -1,0 +1,38 @@
+{
+  "retrain_timestamp": "2026-06-16T22:25:57.528245",
+  "trigger": {
+    "reward_drift": false,
+    "feature_drift": true,
+    "arm_drift": false,
+    "reward_drop_pct": -310.64,
+    "ks_pvalue": 0.0
+  },
+  "retrained_version": "thompson-v2",
+  "retrained_run_id": "503446d43c614f508b6662ce01914180",
+  "previous_version": "thompson-v1",
+  "gate_check_pass": false,
+  "gate_details": {
+    "G1": {
+      "pass": false,
+      "valor": "0.1110"
+    },
+    "G2": {
+      "pass": true,
+      "valor": "77.86"
+    },
+    "G3": {
+      "pass": true,
+      "valor": "26.1%"
+    },
+    "G4": {
+      "pass": true,
+      "valor": "exit code 0"
+    }
+  },
+  "decision": "REJECTED",
+  "metrics": {
+    "avg_reward": 0.11099095556429414,
+    "final_regret": 77.86427944189677,
+    "best_arm_pct": 26.15
+  }
+}
