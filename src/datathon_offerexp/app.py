@@ -179,6 +179,7 @@ from pydantic import BaseModel
 class AskRequest(BaseModel):
     question: str
     include_log_summary: bool = False
+    include_policy_context: bool = False
 
 
 class ExplainRequest(BaseModel):
@@ -193,6 +194,7 @@ def assistant_ask(req: AskRequest) -> dict:
     answer = ask(
         req.question,
         include_log_summary=req.include_log_summary,
+        include_policy_context=req.include_policy_context,
         log_path=str(_log.path),
     )
     return {"question": req.question, "answer": answer}

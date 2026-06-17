@@ -1,8 +1,57 @@
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 from typing import Any
+
+def _resolve_policies_dir() -> Path:
+    """Locate policies directory with multiple fallback strategies."""
+    env = os.getenv("OFFEREXP_POLICIES_DIR")
+    if env:
+        return Path(env)
+    # Running from project root (pytest, make test, make serve)
+    cwd = Path.cwd() / "data" / "synthetic_enrichment" / "policies"
+    if cwd.exists():
+        return cwd
+    # Editable install: src/datathon_offerexp/assistant.py → up 4 levels
+    src = Path(__file__).resolve().parents[3] / "data" / "synthetic_enrichment" / "policies"
+    return src
+
+
+_POLICIES_DIR = _resolve_policies_dir()
+
+
+def retrieve_policies(query: str, top_k_sections: int = 3) -> str:
+    """Keyword-based RAG over synthetic policy documents.
+
+    Splits each policy markdown into sections (## headings), scores sections
+    by keyword overlap with the query, and returns the top_k most relevant
+    sections. In production this is replaced by Azure AI Search semantic search.
+    """
+    if not _POLICIES_DIR.exists():
+        return ""
+
+    query_terms = set(re.sub(r"[^\w\s]", " ", query.lower()).split())
+    scored: list[tuple[int, str, str]] = []
+
+    for doc_path in sorted(_POLICIES_DIR.glob("*.md")):
+        text = doc_path.read_text(encoding="utf-8")
+        sections = re.split(r"\n(?=#{1,3} )", text)
+        for section in sections:
+            title_match = re.match(r"#{1,3} (.+)", section)
+            title = title_match.group(1).strip() if title_match else doc_path.stem
+            section_terms = set(re.sub(r"[^\w\s]", " ", section.lower()).split())
+            overlap = len(query_terms & section_terms)
+            if overlap > 0:
+                scored.append((overlap, title, section.strip()))
+
+    scored.sort(key=lambda x: -x[0])
+    if not scored:
+        return ""
+
+    parts = [f"[Política: {title}]\n{section}" for _, title, section in scored[:top_k_sections]]
+    return "\n\n---\n\n".join(parts)
 
 SYSTEM_PROMPT = """Você é o assistente da plataforma OfferExp — um sistema de experimentação adaptativa
 para ofertas financeiras baseado em Multi-Armed Bandits.
@@ -67,6 +116,7 @@ def ask(
     question: str,
     extra_context: dict[str, Any] | None = None,
     include_log_summary: bool = False,
+    include_policy_context: bool = False,
     log_path: str | None = None,
 ) -> str:
     """Sends a question to the LLM assistant and returns the response.
@@ -75,12 +125,21 @@ def ask(
     provider. Set LLM_PROVIDER=anthropic only for local development when an
     Azure OpenAI deployment is not available. Falls back to a stub response if
     no API key is configured, so the module is always importable.
+
+    include_policy_context=True runs local keyword-based RAG over the synthetic
+    policy documents in data/synthetic_enrichment/policies/. In production this
+    is replaced by Azure AI Search semantic retrieval.
     """
     provider = os.getenv("LLM_PROVIDER", "azure_openai").lower()
     context_str = _build_context(extra_context)
 
     if include_log_summary:
         context_str += "\n\n" + _load_decision_log_summary(log_path)
+
+    if include_policy_context:
+        policy_snippets = retrieve_policies(question)
+        if policy_snippets:
+            context_str += "\n\nPolíticas internas recuperadas (RAG):\n" + policy_snippets
 
     full_question = question + context_str
 
