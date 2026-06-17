@@ -207,6 +207,32 @@ Service Bus → Worker → Cosmos DB (atualizar α,β)
 
 ---
 
+## Justificativa de Trade-offs
+
+### Por que Azure exclusivamente?
+
+A solução usa **somente serviços Azure** em produção, sem dependência de outros provedores de nuvem. Os principais motivos:
+
+- **Residência de dados**: todos os dados de clientes (mesmo sintéticos neste MVP) permanecem na região Brazil South / East US 2, dentro do boundary Azure — necessário para conformidade LGPD.
+- **Managed Identity unificada**: um único plano de identidade (Azure AD) cobre todos os serviços, sem cross-cloud credential management.
+- **Compliance financeiro**: Azure possui certificações específicas para o setor financeiro brasileiro (BACEN, CVM) que não requerem customização adicional quando os dados ficam dentro do ecossistema.
+
+> **Nota sobre Anthropic**: o código suporta Anthropic como fallback para **desenvolvimento local** (quando não há deployment Azure OpenAI disponível). Em produção, `LLM_PROVIDER=azure_openai` é o padrão e Anthropic não é ativado.
+
+### Escolhas de serviço e alternativas descartadas
+
+| Decisão | Serviço escolhido | Alternativa descartada | Trade-off |
+|---|---|---|---|
+| **Compute** | Azure Container Apps | Azure Kubernetes Service (AKS) | ACA abstrai o orquestrador — perde controle de scheduling avançado, ganha operação zero. Adequado para o volume atual (<1k req/s). AKS seria escolhido se houvesse múltiplos microsserviços com dependências complexas |
+| **Estado do bandit** | Azure Cosmos DB | Azure SQL / PostgreSQL | Cosmos garante latência <10ms em leituras ponto-a-ponto (α, β por braço) sem índice. SQL teria latência maior mas schema mais rígido — útil se o modelo precisasse de joins complexos, o que não é o caso |
+| **Logs de decisão** | Azure Blob Storage (JSONL) | Azure Data Explorer / ADX | Blob é imutável, barato e auditável sem processamento. ADX adiciona query power mas custa ~5x mais. Escolhemos Blob + Log Analytics para consultas sob demanda |
+| **Mensageria** | Azure Service Bus | Azure Event Hubs | Service Bus garante **exactly-once delivery** e suporta dead-letter queue — essencial para rewards atrasados que não podem ser perdidos. Event Hubs é otimizado para streaming de alto volume (>1M eventos/s), acima do necessário aqui |
+| **LLM em produção** | Azure OpenAI Service | Anthropic API (direto) | Azure OpenAI mantém os dados dentro do boundary Azure (zero data exfiltration para terceiros), tem SLA de 99.9% e é coberto pelo Microsoft Customer Agreement. Anthropic direto exigiria cross-cloud com dados saindo do Azure |
+| **MLOps** | Azure Machine Learning | Databricks / MLflow autônomo | Azure ML já inclui MLflow tracking com autenticação AAD integrada. Databricks adicionaria custo e um segundo plano de identidade sem benefício para o volume atual |
+| **Busca RAG** | Azure AI Search | Elasticsearch / OpenSearch | AI Search é gerenciado e integrado nativamente ao Azure OpenAI via On Your Data. Elasticsearch requereria VM dedicada e gerenciamento de índices |
+
+---
+
 ## Plano de Deploy
 
 ### Pipeline CI/CD

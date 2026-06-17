@@ -71,11 +71,12 @@ def ask(
 ) -> str:
     """Sends a question to the LLM assistant and returns the response.
 
-    Uses Anthropic Claude by default (LLM_PROVIDER=anthropic) or Azure OpenAI
-    (LLM_PROVIDER=azure_openai). Falls back to a stub response if no API key
-    is configured, so the module is always importable.
+    Uses Azure OpenAI by default (LLM_PROVIDER=azure_openai) — the production
+    provider. Set LLM_PROVIDER=anthropic only for local development when an
+    Azure OpenAI deployment is not available. Falls back to a stub response if
+    no API key is configured, so the module is always importable.
     """
-    provider = os.getenv("LLM_PROVIDER", "anthropic").lower()
+    provider = os.getenv("LLM_PROVIDER", "azure_openai").lower()
     context_str = _build_context(extra_context)
 
     if include_log_summary:
