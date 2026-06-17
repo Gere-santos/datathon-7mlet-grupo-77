@@ -1,0 +1,47 @@
+{
+  "decision_timestamp": "2026-06-16T22:05:49.054190",
+  "challenger_version": "nilos-ucb-v1",
+  "challenger_run_id": "5245bd11de354d6fa2f38a948f2522af",
+  "baseline_version": "thompson-v1",
+  "baseline_run_id": "c9a716ddb9574e4dbf8a30957b27d4b3",
+  "gate_check_pass": false,
+  "checklist_pass": false,
+  "gate_details": {
+    "G1": {
+      "pass": false,
+      "valor": "0.1097",
+      "threshold": "> 0.1144"
+    },
+    "G2": {
+      "pass": false,
+      "valor": "91.15",
+      "threshold": "< 79.91"
+    },
+    "G3": {
+      "pass": false,
+      "valor": "15.8%",
+      "threshold": ">= 25.0%"
+    },
+    "G4": {
+      "pass": true,
+      "valor": "exit code 0",
+      "threshold": "exit code 0"
+    }
+  },
+  "metrics_challenger": {
+    "avg_reward": 0.10973105134474327,
+    "final_regret": 91.15250268318869,
+    "best_arm_pct": 15.75
+  },
+  "metrics_baseline": {
+    "avg_reward": 0.11099095556429414,
+    "final_regret": 77.86427944189677,
+    "best_arm_pct": 26.15
+  },
+  "decision": "REJECTED",
+  "failed_gates": [
+    "G1",
+    "G2",
+    "G3"
+  ]
+}
