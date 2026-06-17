@@ -64,7 +64,16 @@ def health() -> dict:
 def decide(request: DecisionRequest) -> DecisionResponse:
     arm_idx = _policy.select_arm()
     arm = OFFER_CATALOG[arm_idx]
-    reason = [f"thompson_sample_arm_{arm_idx}"]
+
+    arm_stats = {s["arm_id"]: s for s in _policy.stats()}
+    s = arm_stats[arm_idx]
+    reason = [
+        f"thompson_sample_arm_{arm_idx}",
+        f"alpha={s.get('alpha', 1):.1f}",
+        f"beta={s.get('beta', 1):.1f}",
+        f"reward_rate={s['reward_rate']:.4f}",
+        f"trials={s['trials']}",
+    ]
 
     _pending[request.event_id] = arm_idx
     _log.log(
