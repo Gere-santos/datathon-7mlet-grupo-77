@@ -1,0 +1,280 @@
+{
+  "timestamp": "2026-06-16T22:58:47.635603",
+  "policy": "thompson-v1",
+  "seed": 42,
+  "warmed": true,
+  "total": 25,
+  "passed": 18,
+  "failed": 7,
+  "pass_rate": 72.0,
+  "by_type": {
+    "typical": {
+      "passed": 3,
+      "failed": 4
+    },
+    "edge": {
+      "passed": 5,
+      "failed": 1
+    },
+    "segment": {
+      "passed": 4,
+      "failed": 2
+    },
+    "adversarial": {
+      "passed": 6,
+      "failed": 0
+    }
+  },
+  "results": [
+    {
+      "case_id": "gc_001",
+      "type": "typical",
+      "desc": "Cliente jovem, alta escolaridade, nunca contatado",
+      "pass_criteria": "arm_id == 3",
+      "arm_id": 1,
+      "decision_id": "04c7f8de-8991-4fb8-81b7-ecf45513f69d",
+      "passed": false,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_002",
+      "type": "typical",
+      "desc": "Cliente em default, baixa escolaridade",
+      "pass_criteria": "arm_id in [1,2]",
+      "arm_id": 1,
+      "decision_id": "7fa2d92c-75d6-4e72-8658-9c6cf041b0a1",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_003",
+      "type": "typical",
+      "desc": "Cliente já contatado, campanha anterior bem-sucedida",
+      "pass_criteria": "arm_id == 3",
+      "arm_id": 1,
+      "decision_id": "8d16ab18-9467-452c-952c-e268447de60b",
+      "passed": false,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_004",
+      "type": "typical",
+      "desc": "Cliente neutro, sem histórico",
+      "pass_criteria": "arm_id != 0",
+      "arm_id": 1,
+      "decision_id": "0e84034c-cc4b-4980-9e62-3dca4fd873e2",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_005",
+      "type": "typical",
+      "desc": "Cliente sênior, aposentado",
+      "pass_criteria": "arm_id in [2,3]",
+      "arm_id": 1,
+      "decision_id": "897d6ee0-348f-4b54-b53c-40db7a452487",
+      "passed": false,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_006",
+      "type": "edge",
+      "desc": "Cliente com máximo de contatos (20+)",
+      "pass_criteria": "arm_id == 0",
+      "arm_id": 1,
+      "decision_id": "63b9fd39-548e-4fd4-860d-6086798b5580",
+      "passed": false,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_007",
+      "type": "edge",
+      "desc": "Contexto mínimo — apenas event_id presente",
+      "pass_criteria": "arm_id in [0,1,2,3]",
+      "arm_id": 1,
+      "decision_id": "cc371743-0a5c-45fa-97b9-d93864cbafbc",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_008",
+      "type": "edge",
+      "desc": "Cliente em cenário macroeconômico adverso (Euribor alta)",
+      "pass_criteria": "arm_id in [1,2]",
+      "arm_id": 1,
+      "decision_id": "a4e07b37-b4ef-4d28-91b5-111fd1ecdc50",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_009",
+      "type": "edge",
+      "desc": "Requisição duplicada — mesmo event_id",
+      "pass_criteria": "arm_id in [0,1,2,3]",
+      "arm_id": 1,
+      "decision_id": "01acc1f8-a3ad-4610-8614-350fbf779ab7",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_010",
+      "type": "edge",
+      "desc": "Cliente com empréstimo habitacional e pessoal simultâneos",
+      "pass_criteria": "arm_id in [1,2]",
+      "arm_id": 1,
+      "decision_id": "cb7a8d3b-71f2-4427-9e6b-885546ec1790",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_011",
+      "type": "segment",
+      "desc": "Segmento: admin — canal app",
+      "pass_criteria": "arm_id != 0",
+      "arm_id": 1,
+      "decision_id": "ddb93a93-a3f6-4d8a-9bde-e637d5051d9a",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_012",
+      "type": "segment",
+      "desc": "Segmento: operário — canal whatsapp",
+      "pass_criteria": "arm_id in [1,2,3]",
+      "arm_id": 1,
+      "decision_id": "ca5d0777-b3ce-4aca-8259-33aaea2b2ddf",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_013",
+      "type": "segment",
+      "desc": "Segmento: estudante — canal web",
+      "pass_criteria": "arm_id in [1,3]",
+      "arm_id": 1,
+      "decision_id": "e2a5a1e3-d90c-40e0-81b8-63fae17a27d2",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_014",
+      "type": "segment",
+      "desc": "Segmento: desempregado — qualquer canal",
+      "pass_criteria": "arm_id in [0,1]",
+      "arm_id": 1,
+      "decision_id": "afd0608e-6045-4ec4-8cc4-d2b270e0a56c",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_015",
+      "type": "segment",
+      "desc": "Segmento: gerente sênior — canal email",
+      "pass_criteria": "arm_id == 3",
+      "arm_id": 1,
+      "decision_id": "0d406151-e748-4b29-a735-b1421be61ba1",
+      "passed": false,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_016",
+      "type": "adversarial",
+      "desc": "Reward hacking: todos os indicadores otimistas forjados",
+      "pass_criteria": "arm_id in [0,1,2,3] and decision_id is not None",
+      "arm_id": 1,
+      "decision_id": "12c389d4-7264-45ad-ae9f-e069c3078d2e",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_017",
+      "type": "adversarial",
+      "desc": "Campo desconhecido injetado no contexto",
+      "pass_criteria": "arm_id in [0,1,2,3]",
+      "arm_id": 1,
+      "decision_id": "c931cc08-870a-4eea-94fd-c6ee7ed02e78",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_018",
+      "type": "adversarial",
+      "desc": "Reward fora do range válido enviado via /reward",
+      "pass_criteria": "reward in [0.0, 1.0]",
+      "arm_id": 1,
+      "decision_id": "b4140c22-5738-485b-944d-21c214272d1b",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_019",
+      "type": "adversarial",
+      "desc": "Flood de decisões do mesmo subject_key",
+      "pass_criteria": "arm_id == 0",
+      "arm_id": 0,
+      "decision_id": "b3a917ec-c922-4d75-8b95-1c9937d3da16",
+      "passed": true,
+      "guardrail_applied": true
+    },
+    {
+      "case_id": "gc_020",
+      "type": "adversarial",
+      "desc": "Violação de suitability: menor de idade",
+      "pass_criteria": "arm_id == 0",
+      "arm_id": 0,
+      "decision_id": "ec762ba9-b10e-4b7d-981c-b545c825d8f4",
+      "passed": true,
+      "guardrail_applied": true
+    },
+    {
+      "case_id": "gc_021",
+      "type": "typical",
+      "desc": "Cliente com histórico de campanha anterior fracassada",
+      "pass_criteria": "arm_id in [1,2]",
+      "arm_id": 1,
+      "decision_id": "71ec109c-a629-4d90-a2d5-ddd622d67619",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_022",
+      "type": "segment",
+      "desc": "Segmento: autônomo — canal app",
+      "pass_criteria": "arm_id in [2,3]",
+      "arm_id": 1,
+      "decision_id": "a422392a-32e9-47f6-82ab-5491625b9ae0",
+      "passed": false,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_023",
+      "type": "edge",
+      "desc": "Cold-start: primeiro request, priors uniformes Beta(1,1)",
+      "pass_criteria": "arm_id in [0,1,2,3]",
+      "arm_id": 1,
+      "decision_id": "d65a9a47-47c4-4bef-ab7a-c714813faa95",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_024",
+      "type": "adversarial",
+      "desc": "event_id inexistente em POST /reward",
+      "pass_criteria": "http_status == 404",
+      "arm_id": 1,
+      "decision_id": "c7ed16ee-b5cf-41e3-a99b-a3e233fbeee4",
+      "passed": true,
+      "guardrail_applied": false
+    },
+    {
+      "case_id": "gc_025",
+      "type": "typical",
+      "desc": "Cliente casado, meia-idade, contato celular",
+      "pass_criteria": "arm_id in [2,3]",
+      "arm_id": 1,
+      "decision_id": "68ed074b-0ccb-4f35-ae7f-625b772b79f7",
+      "passed": false,
+      "guardrail_applied": false
+    }
+  ]
+}
