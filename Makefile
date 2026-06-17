@@ -1,4 +1,4 @@
-.PHONY: install test lint api mlflow clean data
+.PHONY: install test lint api mlflow clean data demo
 
 install:
 	pip install -e ".[dev]"
@@ -11,6 +11,9 @@ lint:
 
 api:
 	uvicorn src.datathon_offerexp.app:app --reload --host 0.0.0.0 --port 8000
+
+demo:
+	bash scripts/run_demo.sh
 
 data:
 	python3 data/synthetic_enrichment/generate_synthetic_data.py

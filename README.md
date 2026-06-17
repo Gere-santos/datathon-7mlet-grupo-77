@@ -294,42 +294,191 @@ A solução contempla:
 
 #  Execução Local
 
-### Criar ambiente virtual
+### Pipeline ponta a ponta (comando único)
+
+```bash
+make demo
+```
+
+Equivalente a:
+
+```bash
+bash scripts/run_demo.sh
+```
+
+O script executa em sequência: instala dependências → verifica dados sintéticos → roda os 33 testes → executa o golden set → exibe instruções para iniciar a API.
+
+### Passo a passo manual
+
+#### Criar e ativar ambiente virtual
+
+Linux / Mac:
 
 ```bash
 python -m venv .venv
-```
-
-### Ativar ambiente
-
-Linux / Mac
-
-```bash
 source .venv/bin/activate
 ```
 
-Windows
+Windows:
 
 ```bash
+python -m venv .venv
 .venv\Scripts\activate
 ```
 
-### Instalar dependências
+#### Instalar dependências
 
 ```bash
 pip install -e ".[dev]"
 ```
 
-### Executar testes
+#### Executar testes
 
 ```bash
-pytest
+make test
+# ou: python -m pytest tests/ -v
 ```
 
-### Iniciar API
+#### Iniciar API
 
 ```bash
-uvicorn src.datathon_offerexp.app:app --reload
+make api
+# ou: uvicorn src.datathon_offerexp.app:app --reload --host 0.0.0.0 --port 8000
+# Swagger UI: http://localhost:8000/docs
+```
+
+---
+
+# Contrato da API — Exemplos de Chamada
+
+A API deve estar rodando em `http://localhost:8000` (`make api`).
+
+## GET /health
+
+```bash
+curl http://localhost:8000/health
+```
+
+```json
+{"status": "ok", "policy": "thompson-v1"}
+```
+
+## POST /decide
+
+Recebe um contexto de cliente e devolve a oferta selecionada pela política.
+
+```bash
+curl -s -X POST http://localhost:8000/decide \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "evt-001",
+    "subject_key": "cliente-123",
+    "context": {
+      "idade": 35,
+      "profissao": "engenheiro",
+      "escolaridade": "superior"
+    }
+  }'
+```
+
+**Resposta (200)**:
+
+```json
+{
+  "event_id": "evt-001",
+  "arm_id": 2,
+  "arm_name": "simulador_credito",
+  "policy_version": "thompson-v1",
+  "reason_codes": ["thompson_sample_arm_2"],
+  "decided_at": "2025-01-15T10:30:00.000000"
+}
+```
+
+**Erro — campos obrigatórios ausentes (422)**:
+
+```bash
+curl -s -X POST http://localhost:8000/decide \
+  -H "Content-Type: application/json" \
+  -d '{"event_id": "evt-001"}'
+```
+
+```json
+{
+  "detail": [{"type": "missing", "loc": ["body", "subject_key"], "msg": "Field required"}]
+}
+```
+
+## POST /reward
+
+Registra a recompensa observada e atualiza a distribuição Beta do braço.
+
+```bash
+curl -s -X POST http://localhost:8000/reward \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "evt-001",
+    "arm_id": 2,
+    "reward": 1.0
+  }'
+```
+
+**Resposta (200)**:
+
+```json
+{"status": "updated", "arm_id": 2, "reward": 1.0}
+```
+
+**Erro — event_id não encontrado (404)**:
+
+```bash
+curl -s -X POST http://localhost:8000/reward \
+  -H "Content-Type: application/json" \
+  -d '{"event_id": "nao-existe", "arm_id": 2, "reward": 1.0}'
+```
+
+```json
+{"detail": "event_id não encontrado ou recompensa já registrada"}
+```
+
+**Erro — arm_id diverge da decisão registrada (400)**:
+
+```json
+{"detail": "arm_id não corresponde à decisão registrada"}
+```
+
+## GET /stats
+
+Retorna as distribuições Beta atuais de todos os braços.
+
+```bash
+curl http://localhost:8000/stats
+```
+
+```json
+{
+  "policy_version": "thompson-v1",
+  "total_decisions": 1,
+  "arms": [
+    {"arm_id": 0, "arm_name": "sem_oferta",          "trials": 0, "successes": 0, "reward_rate": 0.0, "alpha": 1.0, "beta": 1.0},
+    {"arm_id": 1, "arm_name": "educacao_financeira",  "trials": 0, "successes": 0, "reward_rate": 0.0, "alpha": 1.0, "beta": 1.0},
+    {"arm_id": 2, "arm_name": "simulador_credito",    "trials": 1, "successes": 1, "reward_rate": 1.0, "alpha": 2.0, "beta": 1.0},
+    {"arm_id": 3, "arm_name": "cartao_premium",       "trials": 0, "successes": 0, "reward_rate": 0.0, "alpha": 1.0, "beta": 1.0}
+  ]
+}
+```
+
+## POST /assistant/ask
+
+Consulta o assistente LLM sobre experimentos e métricas.
+
+```bash
+curl -s -X POST http://localhost:8000/assistant/ask \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Qual braço está performando melhor?", "include_log_summary": true}'
+```
+
+```json
+{"question": "Qual braço está performando melhor?", "answer": "..."}
 ```
 
 ---
