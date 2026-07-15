@@ -41,7 +41,7 @@ graph TD
             MLflow["MLflow Tracking\n+ Model Registry"]
         end
 
-        subgraph AI["IA Generativa"]
+        subgraph AI["IA Generativa (trabalho futuro)"]
             AOAI["Azure OpenAI Service\nAssistente LLM (GPT-4o)"]
             Search["Azure AI Search\nRAG — Políticas e Logs"]
         end
@@ -107,7 +107,7 @@ graph TD
 | **Azure Machine Learning** | Workspace MLflow | Tracking de experimentos, model registry |
 | **MLflow** | Logging de métricas e artefatos | Padrão open-source integrado ao Azure ML |
 
-### IA Generativa
+### IA Generativa (trabalho futuro — não implementado neste MVP)
 
 | Serviço | Uso | Justificativa |
 |---------|-----|---------------|
@@ -202,8 +202,7 @@ Service Bus → Worker → Cosmos DB (atualizar α,β)
 | Blob Storage | LRS, 10 GB | ~$1 |
 | Service Bus | Standard, 1M msg | ~$10 |
 | Azure ML (MLflow) | Compute básico | ~$30 |
-| Azure OpenAI | GPT-4o mini, 1M tokens | ~$15 |
-| **Total estimado** | | **~$76/mês** |
+| **Total estimado** | | **~$61/mês** |
 
 ---
 
@@ -216,8 +215,6 @@ A solução usa **somente serviços Azure** em produção, sem dependência de o
 - **Residência de dados**: todos os dados de clientes (mesmo sintéticos neste MVP) permanecem na região Brazil South / East US 2, dentro do boundary Azure — necessário para conformidade LGPD.
 - **Managed Identity unificada**: um único plano de identidade (Azure AD) cobre todos os serviços, sem cross-cloud credential management.
 - **Compliance financeiro**: Azure possui certificações específicas para o setor financeiro brasileiro (BACEN, CVM) que não requerem customização adicional quando os dados ficam dentro do ecossistema.
-
-> **Nota sobre Anthropic**: o código suporta Anthropic como fallback para **desenvolvimento local** (quando não há deployment Azure OpenAI disponível). Em produção, `LLM_PROVIDER=azure_openai` é o padrão e Anthropic não é ativado.
 
 ### Escolhas de serviço e alternativas descartadas
 
@@ -279,17 +276,12 @@ O estado do bandit (α, β) no Cosmos DB **não é afetado** pelo rollback da AP
 
 ### Princípio
 
-Nenhuma credencial é armazenada em código, imagem Docker ou variável de ambiente em texto claro. Todo acesso a serviços Azure usa **Managed Identity** (sem chave); segredos de terceiros (Anthropic, Azure OpenAI) ficam no **Azure Key Vault**.
+Nenhuma credencial é armazenada em código, imagem Docker ou variável de ambiente em texto claro. Todo acesso a serviços Azure usa **Managed Identity** (sem chave); segredos de terceiros ficam no **Azure Key Vault**.
 
 ### Mapeamento: `.env.example` → Azure
 
 | Variável (local) | Mecanismo Azure | Observação |
 |---|---|---|
-| `AZURE_OPENAI_API_KEY` | Key Vault secret: `offerexp-aoai-key` | Rotação automática via APIM |
-| `AZURE_OPENAI_ENDPOINT` | Key Vault secret: `offerexp-aoai-endpoint` | Referenciado como `secretref` no Container App |
-| `AZURE_OPENAI_DEPLOYMENT` | Variável de ambiente não-secreta | Definida no manifesto do Container App |
-| `ANTHROPIC_API_KEY` | Key Vault secret: `offerexp-anthropic-key` | Apenas em ambientes sem Azure OpenAI |
-| `LLM_PROVIDER` | Variável de ambiente não-secreta | `"azure_openai"` em produção |
 | `AZURE_COSMOS_KEY` | **Não usado** — substituído por Managed Identity | Container App recebe role `Cosmos DB Built-in Data Contributor` |
 | `AZURE_COSMOS_ENDPOINT` | Variável de ambiente não-secreta | Endpoint público sem credencial |
 | `AZURE_STORAGE_CONNECTION_STRING` | **Não usado** — substituído por Managed Identity | Container App recebe role `Storage Blob Data Contributor` |
@@ -327,26 +319,10 @@ az role assignment create \
   --scope /subscriptions/<sub>/resourceGroups/offerexp-rg/providers/Microsoft.Storage/storageAccounts/offerexpstorage
 ```
 
-### Referenciando Key Vault no Container App
-
-```bash
-# Adicionar segredo referenciando Key Vault (sem copiar o valor)
-az containerapp secret set \
-  --name offerexp-api --resource-group offerexp-rg \
-  --secrets "aoai-key=keyvaultref:https://offerexp-kv.vault.azure.net/secrets/offerexp-aoai-key,identityref:<identity-resource-id>"
-
-# Injetar como variável de ambiente
-az containerapp update \
-  --name offerexp-api --resource-group offerexp-rg \
-  --set-env-vars "AZURE_OPENAI_API_KEY=secretref:aoai-key"
-```
-
 ### Rotação de Segredos
 
 | Segredo | Frequência | Responsável |
 |---|---|---|
-| `AZURE_OPENAI_API_KEY` | 90 dias | Azure Key Vault auto-rotation |
-| `ANTHROPIC_API_KEY` | 90 dias | Manual via Key Vault + alerta de expiração |
 | Managed Identity tokens | Automático | Azure AD (tokens com TTL de 24h) |
 
 ---

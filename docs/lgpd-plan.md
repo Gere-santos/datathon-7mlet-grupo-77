@@ -48,7 +48,7 @@ Titulares podem solicitar visualização dos logs de decisões associados ao seu
 Logs são imutáveis (JSONL append-only). Correções são registradas como novos eventos, não sobrescrevem histórico.
 
 ### 6. Transparência (art. 6º, VI)
-`reason_codes` em cada decisão garantem explicabilidade. Assistente LLM planejado para respostas em linguagem natural.
+`reason_codes` em cada decisão garantem explicabilidade. Assistente LLM para respostas em linguagem natural é trabalho futuro planejado.
 
 ### 7. Segurança (art. 6º, VII)
 - Logs armazenados em storage criptografado (Azure Blob Storage com CMK).
@@ -130,7 +130,6 @@ Os seguintes atributos são considerados **dados sensíveis** pela LGPD e o sist
 - Nome, CPF, e-mail, endereço, telefone do cliente.
 - Dados bancários (saldo, renda, histórico de crédito).
 - Dados sensíveis (saúde, raça, religião — LGPD art. 5, II).
-- Conteúdo das interações com o assistente LLM (apenas metadados: timestamp, duração).
 - IP do cliente (se implementado em produção, hash unidirecional antes do log).
 
 ### Sanitização antes do log

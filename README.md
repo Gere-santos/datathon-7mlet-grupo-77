@@ -1,6 +1,6 @@
 # Datathon 7MLET — Plataforma de Experimentação Adaptativa para Ofertas Financeiras
 
-> Projeto desenvolvido para o Datathon 7MLET da Pós-Tech FIAP com foco em **Multi-Armed Bandits**, **MLOps**, **LLMOps**, **Governança de IA** e **Arquitetura Azure**.
+> Projeto desenvolvido para o Datathon 7MLET da Pós-Tech FIAP com foco em **Multi-Armed Bandits**, **MLOps**, **Governança de IA** e **Arquitetura Azure**.
 
 ---
 
@@ -201,14 +201,12 @@ datathon-7mlet-grupo-77/
 │       ├── evaluation.py              # Replayer Method, compute_regret
 │       ├── decision_log.py            # log auditável JSONL append-only
 │       ├── mlflow_utils.py            # rastreamento SQLite backend
-│       ├── assistant.py               # assistente LLM (Anthropic / Azure / stub)
 │       └── app.py                     # FastAPI: /decide /reward /stats /health
 └── tests/
     ├── test_contracts.py              # contratos Pydantic
     ├── test_policies.py               # políticas de decisão
     ├── test_decision_log.py           # log auditável
-    ├── test_mlflow_utils.py           # rastreamento MLflow
-    └── test_assistant.py              # assistente LLM
+    └── test_mlflow_utils.py           # rastreamento MLflow
 ```
 
 ---
@@ -485,20 +483,6 @@ curl http://localhost:8000/stats
     {"arm_id": 3, "arm_name": "cartao_premium",       "trials": 0, "successes": 0, "reward_rate": 0.0, "alpha": 1.0, "beta": 1.0}
   ]
 }
-```
-
-## POST /assistant/ask
-
-Consulta o assistente LLM sobre experimentos e métricas.
-
-```bash
-curl -s -X POST http://localhost:8000/assistant/ask \
-  -H "Content-Type: application/json" \
-  -d '{"question": "Qual braço está performando melhor?", "include_log_summary": true}'
-```
-
-```json
-{"question": "Qual braço está performando melhor?", "answer": "..."}
 ```
 
 ---
