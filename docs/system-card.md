@@ -15,7 +15,6 @@ O sistema combina:
 - Algoritmo de Multi-Armed Bandit (Thompson Sampling) para seleção de ofertas.
 - API de decisão em tempo real (FastAPI).
 - Logs auditáveis de decisões.
-- Assistente de explicabilidade via LLM (planejado).
 
 ---
 
@@ -69,7 +68,7 @@ O sistema foi desenvolvido **exclusivamente para fins acadêmicos** no Datathon 
 | Drift de comportamento dos clientes | Alta | Monitoramento contínuo de reward médio; resets periódicos de prior |
 | Viés nos dados sintéticos | Baixa | Dados gerados com distribuição uniforme entre braços |
 | Uso não autorizado em produção | Alta | Aviso explícito: sistema acadêmico, sem dados reais |
-| Falta de explicabilidade | Média | reason_codes em cada decisão; assistente LLM para explicações em linguagem natural |
+| Falta de explicabilidade | Média | reason_codes em cada decisão; trabalho futuro: assistente LLM para explicações em linguagem natural |
 
 ---
 
@@ -90,15 +89,6 @@ O sistema foi desenvolvido **exclusivamente para fins acadêmicos** no Datathon 
 - API ignora campos desconhecidos (Pydantic com `extra='ignore'`).
 - Valores numéricos são validados em ranges históricos do dataset.
 - Campos críticos têm whitelist de valores aceitos.
-
-### Abuso do Assistente LLM
-**Descrição**: Usuário tenta usar o assistente para extrair informações sobre clientes reais, contornar políticas ou gerar conteúdo inadequado.  
-**Impacto**: Violação de privacidade, desvio de propósito, risco reputacional.  
-**Mitigação**:
-- Assistente responde apenas sobre experimentos, métricas e políticas sintéticas.
-- Prompt system proíbe explicitamente mencionar dados de clientes reais.
-- Respostas limitadas a contexto do repositório (RAG sobre docs do projeto).
-- Logs de interações do assistente auditáveis.
 
 ### Violação de Suitability
 **Descrição**: Sistema apresenta produto financeiro inadequado para perfil do cliente (ex.: crédito para menor de idade, produto de risco para cliente em default).  
