@@ -119,12 +119,6 @@ curl -s localhost:8000/stats
 # → Alpha/Beta atualizados por braço em tempo real
 ```
 
-**4. Assistente LLM explicando a decisão**
-```bash
-curl -s -X POST localhost:8000/assistant/ask \
-  -d '{"question": "Qual braço está performando melhor?", "include_log_summary": true}'
-```
-
 ---
 
 <!-- _class: cover -->

@@ -14,49 +14,9 @@ from pathlib import Path
 _ROOT      = Path(__file__).parents[1]
 _ARCH_DOC  = _ROOT / "docs" / "architecture-azure.md"
 _ENV_FILE  = _ROOT / ".env.example"
-_ASSISTANT = _ROOT / "src" / "datathon_offerexp" / "assistant.py"
 
 
 # ── 1. Exclusividade Azure em produção ───────────────────────────────────────
-
-def test_llm_provider_default_e_azure():
-    """O módulo assistant usa azure_openai como default — não Anthropic."""
-    source = _ASSISTANT.read_text()
-    tree   = ast.parse(source)
-
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Call):
-            # procura os.getenv("LLM_PROVIDER", <default>)
-            if (
-                isinstance(node.func, ast.Attribute)
-                and node.func.attr == "getenv"
-                and len(node.args) >= 2
-                and isinstance(node.args[0], ast.Constant)
-                and node.args[0].value == "LLM_PROVIDER"
-            ):
-                default = node.args[1]
-                assert isinstance(default, ast.Constant), \
-                    "default de LLM_PROVIDER deve ser uma constante"
-                assert default.value == "azure_openai", (
-                    f"Default de LLM_PROVIDER deve ser 'azure_openai', "
-                    f"mas é '{default.value}' — deploy sem variável usaria provedor não-Azure"
-                )
-                return
-    raise AssertionError("os.getenv('LLM_PROVIDER', ...) não encontrado em assistant.py")
-
-
-def test_env_example_llm_provider_producao_e_azure():
-    """.env.example deve ter LLM_PROVIDER=azure_openai ativo (sem comentário)."""
-    linhas_ativas = [
-        l.strip() for l in _ENV_FILE.read_text().splitlines()
-        if l.strip() and not l.strip().startswith("#")
-    ]
-    providers_ativos = [l for l in linhas_ativas if l.startswith("LLM_PROVIDER=")]
-    assert providers_ativos, "LLM_PROVIDER deve estar definido em .env.example"
-    assert all("azure_openai" in p for p in providers_ativos), (
-        f"Todos os LLM_PROVIDER ativos devem ser azure_openai, mas encontrou: {providers_ativos}"
-    )
-
 
 def test_anthropic_nao_e_provider_ativo_no_env():
     """Anthropic deve aparecer apenas como linha comentada em .env.example."""
@@ -67,27 +27,6 @@ def test_anthropic_nao_e_provider_ativo_no_env():
         assert "anthropic" not in stripped.lower(), (
             f"Linha ativa referencia Anthropic (provedor não-Azure): '{stripped}'"
         )
-
-
-def test_sem_dependencia_ativa_de_outros_provedores_no_codigo():
-    """assistant.py: provedores não-Azure só podem aparecer no fallback local,
-    nunca como import incondicional de topo de arquivo."""
-    source = _ASSISTANT.read_text()
-    tree   = ast.parse(source)
-
-    # imports no nível de módulo não devem referenciar 'anthropic' diretamente
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.Import, ast.ImportFrom)) and node.col_offset == 0:
-            names = (
-                [a.name for a in node.names]
-                if isinstance(node, ast.Import)
-                else ([node.module] if node.module else [])
-            )
-            for name in names:
-                assert "anthropic" not in (name or "").lower(), (
-                    f"Import incondicional de '{name}' no topo — "
-                    "provedor não-Azure não deve ser dependência obrigatória"
-                )
 
 
 # ── 2. Cobertura das camadas ──────────────────────────────────────────────────

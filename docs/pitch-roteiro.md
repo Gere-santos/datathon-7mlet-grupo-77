@@ -69,16 +69,6 @@ curl -s http://localhost:8000/stats
 
 *"Aqui estão os parâmetros Alpha e Beta de cada braço, atualizados em tempo real. O braço que acabou de receber reward subiu. Em produção Azure, esse estado fica no Cosmos DB — persiste entre deploys e entre instâncias."*
 
-```bash
-# 4. Consultar o assistente LLM
-curl -s -X POST http://localhost:8000/assistant/ask \
-  -H "Content-Type: application/json" \
-  -d '{"question": "Qual braço está performando melhor?",
-       "include_log_summary": true}'
-```
-
-*"O assistente LLM consegue resumir os experimentos e explicar as decisões em linguagem natural — isso é o que separa um sistema auditável de uma caixa-preta."*
-
 ---
 
 ## Bloco 4 — Encerramento (4:15 – 4:45)

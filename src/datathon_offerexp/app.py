@@ -12,7 +12,6 @@ from datathon_offerexp.contracts import (
     PolicyStatsResponse,
     RewardUpdate,
 )
-from datathon_offerexp.assistant import ask, explain_decision
 from datathon_offerexp.decision_log import DecisionLog
 from datathon_offerexp.mlflow_utils import EXPERIMENT_NAME, configure_tracking, get_or_create_experiment
 from datathon_offerexp.policies import OFFER_CATALOG, ThompsonSamplingPolicy
@@ -173,39 +172,3 @@ def stats() -> PolicyStatsResponse:
     )
 
 
-from pydantic import BaseModel
-
-
-class AskRequest(BaseModel):
-    question: str
-    include_log_summary: bool = False
-    include_policy_context: bool = False
-
-
-class ExplainRequest(BaseModel):
-    event_id: str
-    arm_name: str
-    reason_codes: list[str] = []
-    context: dict = {}
-
-
-@app.post("/assistant/ask")
-def assistant_ask(req: AskRequest) -> dict:
-    answer = ask(
-        req.question,
-        include_log_summary=req.include_log_summary,
-        include_policy_context=req.include_policy_context,
-        log_path=str(_log.path),
-    )
-    return {"question": req.question, "answer": answer}
-
-
-@app.post("/assistant/explain")
-def assistant_explain(req: ExplainRequest) -> dict:
-    explanation = explain_decision(
-        arm_name=req.arm_name,
-        reason_codes=req.reason_codes,
-        policy_version=_policy.version,
-        context=req.context,
-    )
-    return {"event_id": req.event_id, "explanation": explanation}

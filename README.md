@@ -72,7 +72,6 @@ Construir uma plataforma capaz de:
 *  API de decisão.
 *  Logs auditáveis.
 *  Observabilidade.
-*  Assistente com LLM.
 *  Arquitetura Microsoft Azure.
 *  Governança e LGPD.
 
@@ -142,9 +141,6 @@ Decision Logs
      │
      ▼
 Monitoramento
-     │
-     ▼
-Assistente LLM
 ```
 
 ---
@@ -259,15 +255,11 @@ Cada decisão registra:
 
 ---
 
-## Assistente com LLM
+## Trabalhos Futuros
 
-Capacidades:
-
-* Explicar decisões.
-* Resumir experimentos.
-* Consultar políticas.
-* Apoiar análise humana.
-* Recuperar conhecimento via RAG.
+* **Assistente com LLM** — integração com Azure OpenAI para explicar decisões em linguagem natural, resumir experimentos e recuperar políticas via RAG. Não implementado nesta versão por não ser requisito do escopo atual.
+* **Thompson Contextual (LinThompson)** — incorporar features do cliente na seleção do braço.
+* **Fairness constraints** — taxa mínima de exposição por segmento demográfico.
 
 ---
 
@@ -314,7 +306,6 @@ A solução contempla:
 | Testes        | Pytest          |
 | Qualidade     | Ruff, MyPy      |
 | MLOps         | MLflow          |
-| IA Generativa | Azure OpenAI    |
 | Cloud         | Microsoft Azure |
 
 ---
