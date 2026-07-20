@@ -1,0 +1,630 @@
+{
+  "base_url": "http://localhost:8000",
+  "total": 25,
+  "passed": 17,
+  "failed": 8,
+  "deterministic_total": 5,
+  "deterministic_passed": 5,
+  "results": [
+    {
+      "case_id": "gc_001",
+      "type": "typical",
+      "desc": "Cliente jovem, alta escolaridade, nunca contatado",
+      "pass_criteria": "arm_id == 3",
+      "http_status": 200,
+      "arm_id": 0,
+      "reward": null,
+      "deterministic": false,
+      "passed": false,
+      "raw": {
+        "event_id": "golden-gc_001",
+        "arm_id": 0,
+        "arm_name": "sem_oferta",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_0",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.692884"
+      }
+    },
+    {
+      "case_id": "gc_002",
+      "type": "typical",
+      "desc": "Cliente em default, baixa escolaridade",
+      "pass_criteria": "arm_id in [1,2]",
+      "http_status": 200,
+      "arm_id": 2,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_002",
+        "arm_id": 2,
+        "arm_name": "simulador_credito",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_2",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.694195"
+      }
+    },
+    {
+      "case_id": "gc_003",
+      "type": "typical",
+      "desc": "Cliente já contatado, campanha anterior bem-sucedida",
+      "pass_criteria": "arm_id == 3",
+      "http_status": 200,
+      "arm_id": 2,
+      "reward": null,
+      "deterministic": false,
+      "passed": false,
+      "raw": {
+        "event_id": "golden-gc_003",
+        "arm_id": 2,
+        "arm_name": "simulador_credito",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_2",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.695514"
+      }
+    },
+    {
+      "case_id": "gc_004",
+      "type": "typical",
+      "desc": "Cliente neutro, sem histórico",
+      "pass_criteria": "arm_id != 0",
+      "http_status": 200,
+      "arm_id": 1,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_004",
+        "arm_id": 1,
+        "arm_name": "educacao_financeira",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_1",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.696816"
+      }
+    },
+    {
+      "case_id": "gc_005",
+      "type": "typical",
+      "desc": "Cliente sênior, aposentado",
+      "pass_criteria": "arm_id in [2,3]",
+      "http_status": 200,
+      "arm_id": 0,
+      "reward": null,
+      "deterministic": false,
+      "passed": false,
+      "raw": {
+        "event_id": "golden-gc_005",
+        "arm_id": 0,
+        "arm_name": "sem_oferta",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_0",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.698011"
+      }
+    },
+    {
+      "case_id": "gc_006",
+      "type": "edge",
+      "desc": "Cliente com máximo de contatos (20+)",
+      "pass_criteria": "arm_id == 0",
+      "http_status": 200,
+      "arm_id": 0,
+      "reward": null,
+      "deterministic": true,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_006",
+        "arm_id": 0,
+        "arm_name": "sem_oferta",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "guardrail_contact_fatigue_20plus"
+        ],
+        "decided_at": "2026-07-20T23:30:02.699222"
+      }
+    },
+    {
+      "case_id": "gc_007",
+      "type": "edge",
+      "desc": "Contexto mínimo — apenas event_id presente",
+      "pass_criteria": "arm_id in [0,1,2,3]",
+      "http_status": 200,
+      "arm_id": 0,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_007",
+        "arm_id": 0,
+        "arm_name": "sem_oferta",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_0",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.700607"
+      }
+    },
+    {
+      "case_id": "gc_008",
+      "type": "edge",
+      "desc": "Cliente em cenário macroeconômico adverso (Euribor alta)",
+      "pass_criteria": "arm_id in [1,2]",
+      "http_status": 200,
+      "arm_id": 0,
+      "reward": null,
+      "deterministic": false,
+      "passed": false,
+      "raw": {
+        "event_id": "golden-gc_008",
+        "arm_id": 0,
+        "arm_name": "sem_oferta",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_0",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.701927"
+      }
+    },
+    {
+      "case_id": "gc_009",
+      "type": "edge",
+      "desc": "Requisição duplicada — mesmo event_id",
+      "pass_criteria": "arm_id in [0,1,2,3]",
+      "http_status": 200,
+      "arm_id": 2,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_009",
+        "arm_id": 2,
+        "arm_name": "simulador_credito",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_2",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.703246"
+      }
+    },
+    {
+      "case_id": "gc_010",
+      "type": "edge",
+      "desc": "Cliente com empréstimo habitacional e pessoal simultâneos",
+      "pass_criteria": "arm_id in [1,2]",
+      "http_status": 200,
+      "arm_id": 2,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_010",
+        "arm_id": 2,
+        "arm_name": "simulador_credito",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_2",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.704489"
+      }
+    },
+    {
+      "case_id": "gc_011",
+      "type": "segment",
+      "desc": "Segmento: admin — canal app",
+      "pass_criteria": "arm_id != 0",
+      "http_status": 200,
+      "arm_id": 2,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_011",
+        "arm_id": 2,
+        "arm_name": "simulador_credito",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_2",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.705552"
+      }
+    },
+    {
+      "case_id": "gc_012",
+      "type": "segment",
+      "desc": "Segmento: operário — canal whatsapp",
+      "pass_criteria": "arm_id in [1,2,3]",
+      "http_status": 200,
+      "arm_id": 3,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_012",
+        "arm_id": 3,
+        "arm_name": "cartao_premium",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_3",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.706579"
+      }
+    },
+    {
+      "case_id": "gc_013",
+      "type": "segment",
+      "desc": "Segmento: estudante — canal web",
+      "pass_criteria": "arm_id in [1,3]",
+      "http_status": 200,
+      "arm_id": 0,
+      "reward": null,
+      "deterministic": false,
+      "passed": false,
+      "raw": {
+        "event_id": "golden-gc_013",
+        "arm_id": 0,
+        "arm_name": "sem_oferta",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_0",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.707644"
+      }
+    },
+    {
+      "case_id": "gc_014",
+      "type": "segment",
+      "desc": "Segmento: desempregado — qualquer canal",
+      "pass_criteria": "arm_id in [0,1]",
+      "http_status": 200,
+      "arm_id": 3,
+      "reward": null,
+      "deterministic": false,
+      "passed": false,
+      "raw": {
+        "event_id": "golden-gc_014",
+        "arm_id": 3,
+        "arm_name": "cartao_premium",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_3",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.708767"
+      }
+    },
+    {
+      "case_id": "gc_015",
+      "type": "segment",
+      "desc": "Segmento: gerente sênior — canal email",
+      "pass_criteria": "arm_id == 3",
+      "http_status": 200,
+      "arm_id": 1,
+      "reward": null,
+      "deterministic": false,
+      "passed": false,
+      "raw": {
+        "event_id": "golden-gc_015",
+        "arm_id": 1,
+        "arm_name": "educacao_financeira",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_1",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.710361"
+      }
+    },
+    {
+      "case_id": "gc_016",
+      "type": "adversarial",
+      "desc": "Reward hacking: todos os indicadores otimistas forjados",
+      "pass_criteria": "arm_id in [0,1,2,3] and decision_id is not None",
+      "http_status": 200,
+      "arm_id": 2,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_016",
+        "arm_id": 2,
+        "arm_name": "simulador_credito",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_2",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.711918"
+      }
+    },
+    {
+      "case_id": "gc_017",
+      "type": "adversarial",
+      "desc": "Campo desconhecido injetado no contexto",
+      "pass_criteria": "arm_id in [0,1,2,3]",
+      "http_status": 200,
+      "arm_id": 2,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_017",
+        "arm_id": 2,
+        "arm_name": "simulador_credito",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_2",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.713183"
+      }
+    },
+    {
+      "case_id": "gc_018",
+      "type": "adversarial",
+      "desc": "Reward fora do range válido enviado via /reward",
+      "pass_criteria": "reward in [0.0, 1.0]",
+      "http_status": 422,
+      "arm_id": 0,
+      "reward": null,
+      "deterministic": true,
+      "passed": true,
+      "raw": {
+        "decide": {
+          "event_id": "golden-gc_018",
+          "arm_id": 0,
+          "arm_name": "sem_oferta",
+          "policy_version": "thompson-v1",
+          "reason_codes": [
+            "thompson_sample_arm_0",
+            "alpha=1.0",
+            "beta=1.0",
+            "reward_rate=0.0000",
+            "trials=0"
+          ],
+          "decided_at": "2026-07-20T23:30:02.714405"
+        },
+        "reward_attempt": {
+          "detail": [
+            {
+              "type": "less_than_equal",
+              "loc": [
+                "body",
+                "reward"
+              ],
+              "msg": "Input should be less than or equal to 1",
+              "input": 5.0,
+              "ctx": {
+                "le": 1.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "gc_019",
+      "type": "adversarial",
+      "desc": "Flood de decisões do mesmo subject_key",
+      "pass_criteria": "arm_id == 0",
+      "http_status": 200,
+      "arm_id": 0,
+      "reward": null,
+      "deterministic": true,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_019",
+        "arm_id": 0,
+        "arm_name": "sem_oferta",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "guardrail_contact_fatigue_20plus"
+        ],
+        "decided_at": "2026-07-20T23:30:02.716995"
+      }
+    },
+    {
+      "case_id": "gc_020",
+      "type": "adversarial",
+      "desc": "Violação de suitability: menor de idade",
+      "pass_criteria": "arm_id == 0",
+      "http_status": 200,
+      "arm_id": 0,
+      "reward": null,
+      "deterministic": true,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_020",
+        "arm_id": 0,
+        "arm_name": "sem_oferta",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "guardrail_age_under_18"
+        ],
+        "decided_at": "2026-07-20T23:30:02.718131"
+      }
+    },
+    {
+      "case_id": "gc_021",
+      "type": "typical",
+      "desc": "Cliente com histórico de campanha anterior fracassada",
+      "pass_criteria": "arm_id in [1,2]",
+      "http_status": 200,
+      "arm_id": 3,
+      "reward": null,
+      "deterministic": false,
+      "passed": false,
+      "raw": {
+        "event_id": "golden-gc_021",
+        "arm_id": 3,
+        "arm_name": "cartao_premium",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_3",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.719375"
+      }
+    },
+    {
+      "case_id": "gc_022",
+      "type": "segment",
+      "desc": "Segmento: autônomo — canal app",
+      "pass_criteria": "arm_id in [2,3]",
+      "http_status": 200,
+      "arm_id": 3,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_022",
+        "arm_id": 3,
+        "arm_name": "cartao_premium",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_3",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.720712"
+      }
+    },
+    {
+      "case_id": "gc_023",
+      "type": "edge",
+      "desc": "Cold-start: primeiro request, priors uniformes Beta(1,1)",
+      "pass_criteria": "arm_id in [0,1,2,3]",
+      "http_status": 200,
+      "arm_id": 1,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_023",
+        "arm_id": 1,
+        "arm_name": "educacao_financeira",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_1",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.722334"
+      }
+    },
+    {
+      "case_id": "gc_024",
+      "type": "adversarial",
+      "desc": "event_id inexistente em POST /reward",
+      "pass_criteria": "http_status == 404",
+      "http_status": 404,
+      "arm_id": null,
+      "reward": null,
+      "deterministic": true,
+      "passed": true,
+      "raw": {
+        "detail": "event_id não encontrado ou recompensa já registrada"
+      }
+    },
+    {
+      "case_id": "gc_025",
+      "type": "typical",
+      "desc": "Cliente casado, meia-idade, contato celular",
+      "pass_criteria": "arm_id in [2,3]",
+      "http_status": 200,
+      "arm_id": 3,
+      "reward": null,
+      "deterministic": false,
+      "passed": true,
+      "raw": {
+        "event_id": "golden-gc_025",
+        "arm_id": 3,
+        "arm_name": "cartao_premium",
+        "policy_version": "thompson-v1",
+        "reason_codes": [
+          "thompson_sample_arm_3",
+          "alpha=1.0",
+          "beta=1.0",
+          "reward_rate=0.0000",
+          "trials=0"
+        ],
+        "decided_at": "2026-07-20T23:30:02.724915"
+      }
+    }
+  ]
+}

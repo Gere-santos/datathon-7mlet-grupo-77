@@ -12,6 +12,7 @@ build/
 # Ambientes virtuais
 venv/
 .venv/
+.venv_*/
 env/
 .env
 
