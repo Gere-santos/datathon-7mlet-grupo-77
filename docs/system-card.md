@@ -95,7 +95,7 @@ O sistema foi desenvolvido **exclusivamente para fins acadêmicos** no Datathon 
 **Impacto**: Risco regulatório, dano ao cliente, responsabilidade legal.  
 **Mitigação**:
 - Guardrail de idade: clientes < 18 anos recebem automaticamente `sem_oferta` (arm_id=0).
-- Guardrail de inadimplência: clientes com `inadimplencia=yes` não recebem `cartao_premium`.
+- Guardrail de inadimplência: clientes com `inadimplencia=yes` não recebem `cartao_premium` — são redirecionados para `educacao_financeira` (arm_id=1).
 - Guardrail de fadiga: clientes com `faixa_contatos=20+` recebem automaticamente `sem_oferta`.
 - Todos os guardrails são logados com `reason_code` específico para auditoria.
 

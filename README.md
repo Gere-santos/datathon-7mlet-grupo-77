@@ -412,17 +412,19 @@ curl -s -X POST http://localhost:8000/decide \
 }
 ```
 
-**Erro — campos obrigatórios ausentes (422)**:
+**Erro — campo obrigatório ausente (422)**:
+
+`event_id` é o único campo obrigatório (`subject_key` tem default `"anon"` e `context` default `{}`):
 
 ```bash
 curl -s -X POST http://localhost:8000/decide \
   -H "Content-Type: application/json" \
-  -d '{"event_id": "evt-001"}'
+  -d '{"subject_key": "cliente-123"}'
 ```
 
 ```json
 {
-  "detail": [{"type": "missing", "loc": ["body", "subject_key"], "msg": "Field required"}]
+  "detail": [{"type": "missing", "loc": ["body", "event_id"], "msg": "Field required"}]
 }
 ```
 

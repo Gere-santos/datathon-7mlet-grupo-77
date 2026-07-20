@@ -34,6 +34,7 @@ _log = DecisionLog("logs/decision_log.jsonl")
 _pending: dict[str, int] = {}  # event_id → arm_id awaiting reward
 
 _ARM_SEM_OFERTA = 0
+_ARM_EDUCACAO_FINANCEIRA = 1
 _ARM_CARTAO_PREMIUM = 3
 
 
@@ -42,8 +43,12 @@ def _apply_guardrails(context: dict, arm_idx: int) -> tuple[int, list[str]]:
 
     Rules documented in docs/system-card.md § Cenários de Risco:
     - age < 18 → sem_oferta (regulatory: minors cannot receive financial products)
-    - inadimplencia=yes → block cartao_premium (credit risk suitability)
-    - faixa_contatos=20+ → sem_oferta (contact fatigue / LGPD art. 6 necessidade)
+    - inadimplencia=yes → block cartao_premium, redirect to educacao_financeira
+      (credit risk suitability — perfil em risco é mais bem servido por conteúdo
+      educativo do que por ausência total de oferta)
+    - faixa_contatos=20+ (ou numero_contatos_campanha > 20, o campo bruto do qual
+      faixa_contatos é derivado via pd.cut em data/kaggle/load_kaggle.py) → sem_oferta
+      (contact fatigue / LGPD art. 6 necessidade)
     """
     idade = context.get("idade")
     if idade is not None:
@@ -54,10 +59,18 @@ def _apply_guardrails(context: dict, arm_idx: int) -> tuple[int, list[str]]:
             pass
 
     if context.get("inadimplencia") in ("yes", True, "true", 1) and arm_idx == _ARM_CARTAO_PREMIUM:
-        return _ARM_SEM_OFERTA, ["guardrail_inadimplencia_cartao_premium"]
+        return _ARM_EDUCACAO_FINANCEIRA, ["guardrail_inadimplencia_cartao_premium"]
 
     if context.get("faixa_contatos") == "20+":
         return _ARM_SEM_OFERTA, ["guardrail_contact_fatigue_20plus"]
+
+    numero_contatos = context.get("numero_contatos_campanha")
+    if numero_contatos is not None:
+        try:
+            if int(numero_contatos) > 20:
+                return _ARM_SEM_OFERTA, ["guardrail_contact_fatigue_20plus"]
+        except (ValueError, TypeError):
+            pass
 
     return arm_idx, []
 

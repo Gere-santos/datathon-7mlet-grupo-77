@@ -88,9 +88,9 @@ def test_cliente_com_18_anos_nao_bloqueado(client):
 
 # ── Guardrail: inadimplência + cartao_premium ─────────────────────────────────
 
-def test_inadimplente_forcado_para_cartao_premium_recebe_sem_oferta(client):
+def test_inadimplente_forcado_para_cartao_premium_recebe_educacao_financeira(client):
     """Se o Thompson escolhesse cartao_premium para um inadimplente, o guardrail
-    deve desviar para sem_oferta. Testamos com monkey-patch da política."""
+    deve desviar para educacao_financeira. Testamos com monkey-patch da política."""
     from unittest.mock import patch
     from datathon_offerexp.app import _policy
 
@@ -102,7 +102,7 @@ def test_inadimplente_forcado_para_cartao_premium_recebe_sem_oferta(client):
         })
     assert r.status_code == 200
     data = r.json()
-    assert data["arm_name"] == "sem_oferta", (
+    assert data["arm_name"] == "educacao_financeira", (
         f"Inadimplente não deve receber cartao_premium, recebeu '{data['arm_name']}'"
     )
     assert "guardrail_inadimplencia_cartao_premium" in data["reason_codes"]
