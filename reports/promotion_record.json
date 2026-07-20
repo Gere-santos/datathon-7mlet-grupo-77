@@ -1,9 +1,9 @@
 {
-  "decision_timestamp": "2026-06-16T22:05:49.054190",
+  "decision_timestamp": "2026-06-16T22:25:32.825840",
   "challenger_version": "nilos-ucb-v1",
-  "challenger_run_id": "5245bd11de354d6fa2f38a948f2522af",
+  "challenger_run_id": "93c46588ee13454aa2255503467d9e4c",
   "baseline_version": "thompson-v1",
-  "baseline_run_id": "c9a716ddb9574e4dbf8a30957b27d4b3",
+  "baseline_run_id": "5c70c996edae436da34affc07269ade4",
   "gate_check_pass": false,
   "checklist_pass": false,
   "gate_details": {

@@ -70,6 +70,27 @@ Cliente → POST /decide → Thompson Sampling → Oferta apresentada
 
 ---
 
+# Dados: Bank Marketing Dataset
+
+**Fonte**: Kaggle · CC0 · 41.188 clientes de um banco português (2008–2010) · 0% de nulos
+
+<br>
+
+**Decisão crítica — remoção de `duration`:**
+A duração da ligação só é conhecida **depois** que o contato acontece. Usá-la como feature seria *data leakage*: o modelo aprenderia com uma informação que não existe no momento da decisão.
+
+```
+Kaggle (raw) → limpeza + tradução de colunas → remoção de duration
+            → enriquecimento sintético (eventos, braços, rewards)
+            → notebooks (EDA → Baseline → Thompson → Avaliação)
+```
+
+<br>
+
+**Camada sintética por cima da base real:** taxas de conversão por braço, delayed rewards e eventos de oferta — a base demográfica é real, o mecanismo de oferta é simulado (decisão consciente para um projeto acadêmico, ver `docs/lgpd-plan.md`).
+
+---
+
 # Modelo: Thompson Sampling
 
 Cada braço tem uma distribuição **Beta(α, β)** que representa a incerteza sobre sua taxa de conversão.
@@ -88,6 +109,26 @@ Cada braço tem uma distribuição **Beta(α, β)** que representa a incerteza s
 | **Thompson Sampling** | **~11,8%** | **Sublinear** | **~70%** |
 
 > +7% vs Random · estável em 5 sementes (CV < 2%) · rastreado no MLflow
+
+---
+
+# Resultados e Guardrails de Suitability
+
+**Avaliação offline** pelo Replayer Method (Li et al., 2011) — conta reward só quando a política teria escolhido o mesmo braço do histórico.
+
+<br>
+
+**3 guardrails automáticos, logados e auditáveis:**
+
+| Guardrail | Regra | Objetivo |
+|-----------|-------|----------|
+| Idade | Cliente < 18 anos → sempre `sem_oferta` | Proteção de menores |
+| Inadimplência | Cliente em default → nunca `cartao_premium` | Suitability financeira |
+| Fadiga de contato | `faixa_contatos` ≥ 20 → sempre `sem_oferta` | Evita spam ao cliente |
+
+<br>
+
+**Fairness monitorada:** Δ na taxa de seleção por braço entre faixas etárias/profissão deve ficar **< 10 p.p.** — braços não são definidos por atributos protegidos.
 
 ---
 
@@ -118,6 +159,44 @@ curl -s -X POST localhost:8000/reward \
 curl -s localhost:8000/stats
 # → Alpha/Beta atualizados por braço em tempo real
 ```
+
+---
+
+# Arquitetura — Microsoft Azure
+
+```
+Cliente → API Management (OAuth2) → Container Apps (FastAPI)
+                                          │
+                    ┌─────────────────────┼─────────────────────┐
+                    ▼                     ▼                     ▼
+              Cosmos DB            Blob Storage           Service Bus
+           (estado α, β)         (decision logs)      (delayed rewards)
+                    │
+                    ▼
+         Azure ML + MLflow (tracking · model registry)
+```
+
+**Por que só Azure:** residência de dados dentro do compliance financeiro (BACEN/CVM), **Managed Identity** única cobrindo todos os serviços — nenhuma credencial em texto claro no código.
+
+**Deploy:** GitHub Actions (pytest + lint + type-check) → build → Container Apps, rollout canary 10% → 50% → 100%, com rollback automático em 1 comando. Custo estimado de dev: **~$61/mês**.
+
+---
+
+# Governança, Riscos e Próximos Passos
+
+**Principais riscos mapeados e mitigados:**
+- *Reward hacking* → validação de range [0,1] + alerta de anomalia (>50% reward=1/hora)
+- *Drift de comportamento* → monitoramento contínuo + reset periódico de prior
+- *Explicabilidade* → `reason_codes` em toda decisão; hoje regra determinística
+
+**LGPD:** só dados sintéticos/públicos hoje. `subject_key` sempre pseudoanonimizado (hash SHA-256); nenhum dado sensível (raça, saúde, religião) é coletado — plano completo em `docs/lgpd-plan.md`.
+
+<br>
+
+**Roadmap:**
+1. **LinUCB contextual** — usar o `context` que a API já recebe (idade, profissão) para personalizar por cliente
+2. **Assistente LLM (Azure OpenAI + RAG)** — explicar decisões em linguagem natural para analistas e clientes
+3. **Human-in-the-loop** — checklist de promoção de política já definido em `docs/mlops-lifecycle.md`
 
 ---
 

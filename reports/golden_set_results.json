@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-16T22:58:47.635603",
+  "timestamp": "2026-06-17T01:00:27.392095",
   "policy": "thompson-v1",
   "seed": 42,
   "warmed": true,
@@ -32,7 +32,7 @@
       "desc": "Cliente jovem, alta escolaridade, nunca contatado",
       "pass_criteria": "arm_id == 3",
       "arm_id": 1,
-      "decision_id": "04c7f8de-8991-4fb8-81b7-ecf45513f69d",
+      "decision_id": "a97b219e-7e3d-455b-a2ed-093e3ae9bf83",
       "passed": false,
       "guardrail_applied": false
     },
@@ -42,7 +42,7 @@
       "desc": "Cliente em default, baixa escolaridade",
       "pass_criteria": "arm_id in [1,2]",
       "arm_id": 1,
-      "decision_id": "7fa2d92c-75d6-4e72-8658-9c6cf041b0a1",
+      "decision_id": "6f29b839-af11-4469-84a4-731c8a6775f3",
       "passed": true,
       "guardrail_applied": false
     },
@@ -52,7 +52,7 @@
       "desc": "Cliente já contatado, campanha anterior bem-sucedida",
       "pass_criteria": "arm_id == 3",
       "arm_id": 1,
-      "decision_id": "8d16ab18-9467-452c-952c-e268447de60b",
+      "decision_id": "39b019af-87ec-467c-8727-7e1e40328358",
       "passed": false,
       "guardrail_applied": false
     },
@@ -62,7 +62,7 @@
       "desc": "Cliente neutro, sem histórico",
       "pass_criteria": "arm_id != 0",
       "arm_id": 1,
-      "decision_id": "0e84034c-cc4b-4980-9e62-3dca4fd873e2",
+      "decision_id": "9f09fc2d-2a1a-46e3-b897-8545a693daf2",
       "passed": true,
       "guardrail_applied": false
     },
@@ -72,7 +72,7 @@
       "desc": "Cliente sênior, aposentado",
       "pass_criteria": "arm_id in [2,3]",
       "arm_id": 1,
-      "decision_id": "897d6ee0-348f-4b54-b53c-40db7a452487",
+      "decision_id": "2521bfe0-639a-4ba5-92fa-3a48c7967184",
       "passed": false,
       "guardrail_applied": false
     },
@@ -82,7 +82,7 @@
       "desc": "Cliente com máximo de contatos (20+)",
       "pass_criteria": "arm_id == 0",
       "arm_id": 1,
-      "decision_id": "63b9fd39-548e-4fd4-860d-6086798b5580",
+      "decision_id": "75619b09-aab8-4dd6-9db8-9cc36314036d",
       "passed": false,
       "guardrail_applied": false
     },
@@ -92,7 +92,7 @@
       "desc": "Contexto mínimo — apenas event_id presente",
       "pass_criteria": "arm_id in [0,1,2,3]",
       "arm_id": 1,
-      "decision_id": "cc371743-0a5c-45fa-97b9-d93864cbafbc",
+      "decision_id": "76199f8a-99b6-458a-9b8c-2add51cbefbd",
       "passed": true,
       "guardrail_applied": false
     },
@@ -102,7 +102,7 @@
       "desc": "Cliente em cenário macroeconômico adverso (Euribor alta)",
       "pass_criteria": "arm_id in [1,2]",
       "arm_id": 1,
-      "decision_id": "a4e07b37-b4ef-4d28-91b5-111fd1ecdc50",
+      "decision_id": "4fe86cbf-2b4d-4369-978b-5a787fe2be65",
       "passed": true,
       "guardrail_applied": false
     },
@@ -112,7 +112,7 @@
       "desc": "Requisição duplicada — mesmo event_id",
       "pass_criteria": "arm_id in [0,1,2,3]",
       "arm_id": 1,
-      "decision_id": "01acc1f8-a3ad-4610-8614-350fbf779ab7",
+      "decision_id": "00ceb74c-cba1-4029-937c-851c1193da2c",
       "passed": true,
       "guardrail_applied": false
     },
@@ -122,7 +122,7 @@
       "desc": "Cliente com empréstimo habitacional e pessoal simultâneos",
       "pass_criteria": "arm_id in [1,2]",
       "arm_id": 1,
-      "decision_id": "cb7a8d3b-71f2-4427-9e6b-885546ec1790",
+      "decision_id": "55611eff-b424-47c5-88f0-e77964d06f3a",
       "passed": true,
       "guardrail_applied": false
     },
@@ -132,7 +132,7 @@
       "desc": "Segmento: admin — canal app",
       "pass_criteria": "arm_id != 0",
       "arm_id": 1,
-      "decision_id": "ddb93a93-a3f6-4d8a-9bde-e637d5051d9a",
+      "decision_id": "2101e793-568f-46ee-b0b3-57ce1fcc106c",
       "passed": true,
       "guardrail_applied": false
     },
@@ -142,7 +142,7 @@
       "desc": "Segmento: operário — canal whatsapp",
       "pass_criteria": "arm_id in [1,2,3]",
       "arm_id": 1,
-      "decision_id": "ca5d0777-b3ce-4aca-8259-33aaea2b2ddf",
+      "decision_id": "7051ca4c-e95d-4c0e-b824-827de251f6d9",
       "passed": true,
       "guardrail_applied": false
     },
@@ -152,7 +152,7 @@
       "desc": "Segmento: estudante — canal web",
       "pass_criteria": "arm_id in [1,3]",
       "arm_id": 1,
-      "decision_id": "e2a5a1e3-d90c-40e0-81b8-63fae17a27d2",
+      "decision_id": "28e23b0a-de9f-4e54-8878-3c53943f3527",
       "passed": true,
       "guardrail_applied": false
     },
@@ -162,7 +162,7 @@
       "desc": "Segmento: desempregado — qualquer canal",
       "pass_criteria": "arm_id in [0,1]",
       "arm_id": 1,
-      "decision_id": "afd0608e-6045-4ec4-8cc4-d2b270e0a56c",
+      "decision_id": "11baa5b9-026b-4362-ab4e-01ef20f920e8",
       "passed": true,
       "guardrail_applied": false
     },
@@ -172,7 +172,7 @@
       "desc": "Segmento: gerente sênior — canal email",
       "pass_criteria": "arm_id == 3",
       "arm_id": 1,
-      "decision_id": "0d406151-e748-4b29-a735-b1421be61ba1",
+      "decision_id": "d286900e-3e9e-44bf-b618-3f51f170b725",
       "passed": false,
       "guardrail_applied": false
     },
@@ -182,7 +182,7 @@
       "desc": "Reward hacking: todos os indicadores otimistas forjados",
       "pass_criteria": "arm_id in [0,1,2,3] and decision_id is not None",
       "arm_id": 1,
-      "decision_id": "12c389d4-7264-45ad-ae9f-e069c3078d2e",
+      "decision_id": "f4d50ee7-49fa-43b3-9c62-2133ef5c602c",
       "passed": true,
       "guardrail_applied": false
     },
@@ -192,7 +192,7 @@
       "desc": "Campo desconhecido injetado no contexto",
       "pass_criteria": "arm_id in [0,1,2,3]",
       "arm_id": 1,
-      "decision_id": "c931cc08-870a-4eea-94fd-c6ee7ed02e78",
+      "decision_id": "0434c3a2-7ca7-48b2-8030-264e7f58e9ef",
       "passed": true,
       "guardrail_applied": false
     },
@@ -202,7 +202,7 @@
       "desc": "Reward fora do range válido enviado via /reward",
       "pass_criteria": "reward in [0.0, 1.0]",
       "arm_id": 1,
-      "decision_id": "b4140c22-5738-485b-944d-21c214272d1b",
+      "decision_id": "72a28f0e-1ded-4ba1-b160-0eb2cd3bbe49",
       "passed": true,
       "guardrail_applied": false
     },
@@ -212,7 +212,7 @@
       "desc": "Flood de decisões do mesmo subject_key",
       "pass_criteria": "arm_id == 0",
       "arm_id": 0,
-      "decision_id": "b3a917ec-c922-4d75-8b95-1c9937d3da16",
+      "decision_id": "a5bef234-7d6c-4cdf-909f-7617bd90772f",
       "passed": true,
       "guardrail_applied": true
     },
@@ -222,7 +222,7 @@
       "desc": "Violação de suitability: menor de idade",
       "pass_criteria": "arm_id == 0",
       "arm_id": 0,
-      "decision_id": "ec762ba9-b10e-4b7d-981c-b545c825d8f4",
+      "decision_id": "9b455b1f-973a-4023-bef0-1d2c075812db",
       "passed": true,
       "guardrail_applied": true
     },
@@ -232,7 +232,7 @@
       "desc": "Cliente com histórico de campanha anterior fracassada",
       "pass_criteria": "arm_id in [1,2]",
       "arm_id": 1,
-      "decision_id": "71ec109c-a629-4d90-a2d5-ddd622d67619",
+      "decision_id": "2bade7b3-5a04-4371-aeda-28965c29af29",
       "passed": true,
       "guardrail_applied": false
     },
@@ -242,7 +242,7 @@
       "desc": "Segmento: autônomo — canal app",
       "pass_criteria": "arm_id in [2,3]",
       "arm_id": 1,
-      "decision_id": "a422392a-32e9-47f6-82ab-5491625b9ae0",
+      "decision_id": "1c175548-c882-4dcc-98f7-ee67b0f0fc34",
       "passed": false,
       "guardrail_applied": false
     },
@@ -252,7 +252,7 @@
       "desc": "Cold-start: primeiro request, priors uniformes Beta(1,1)",
       "pass_criteria": "arm_id in [0,1,2,3]",
       "arm_id": 1,
-      "decision_id": "d65a9a47-47c4-4bef-ab7a-c714813faa95",
+      "decision_id": "c64312d1-fc9f-4799-ac49-0a5b4cc59e79",
       "passed": true,
       "guardrail_applied": false
     },
@@ -262,7 +262,7 @@
       "desc": "event_id inexistente em POST /reward",
       "pass_criteria": "http_status == 404",
       "arm_id": 1,
-      "decision_id": "c7ed16ee-b5cf-41e3-a99b-a3e233fbeee4",
+      "decision_id": "b9052510-3383-4cfe-be6b-e15dd9fad038",
       "passed": true,
       "guardrail_applied": false
     },
@@ -272,7 +272,7 @@
       "desc": "Cliente casado, meia-idade, contato celular",
       "pass_criteria": "arm_id in [2,3]",
       "arm_id": 1,
-      "decision_id": "68ed074b-0ccb-4f35-ae7f-625b772b79f7",
+      "decision_id": "4d143b41-75e8-4864-b02d-b92a66f82cfb",
       "passed": false,
       "guardrail_applied": false
     }
