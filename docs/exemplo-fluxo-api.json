@@ -1,0 +1,123 @@
+{
+  "titulo": "Fluxo da API OfferExp — passo a passo comentado",
+  "como_usar": "Cada item abaixo é um passo do fluxo real de uso da API. 'endpoint' e 'metodo' dizem onde chamar, 'request' é o corpo a enviar (cole no Swagger em localhost:8000/docs), 'resposta_esperada' mostra o formato de retorno, e 'explicacao' descreve o que está acontecendo no negócio.",
+
+  "passos": [
+    {
+      "passo": 1,
+      "titulo": "Health check — a API está de pé?",
+      "endpoint": "/health",
+      "metodo": "GET",
+      "request": null,
+      "resposta_esperada": {
+        "status": "ok",
+        "policy": "thompson-v1"
+      },
+      "explicacao": "Só confirma que o servidor subiu e qual versão da política de decisão está ativa."
+    },
+
+    {
+      "passo": 2,
+      "titulo": "Um cliente real chega no canal digital",
+      "endpoint": "/decide",
+      "metodo": "POST",
+      "request": {
+        "event_id": "evt-cliente-001",
+        "subject_key": "cliente-123",
+        "context": {
+          "idade": 35,
+          "profissao": "engenheiro",
+          "escolaridade": "superior"
+        }
+      },
+      "resposta_esperada": {
+        "event_id": "evt-cliente-001",
+        "arm_id": 2,
+        "arm_name": "simulador_credito",
+        "policy_version": "thompson-v1",
+        "reason_codes": ["thompson_sample_arm_2", "alpha=1.0", "beta=1.0", "reward_rate=0.0000", "trials=0"],
+        "decided_at": "2026-01-15T10:30:00.000000"
+      },
+      "explicacao": "'context' representa os dados desse cliente no momento em que ele aparece. A API NÃO pergunta o que o cliente quer — ela decide sozinha qual das 4 ofertas mostrar (sem_oferta, educacao_financeira, simulador_credito, cartao_premium), usando Thompson Sampling. 'event_id' é só um identificador único dessa interação, pra poder casar com o reward depois."
+    },
+
+    {
+      "passo": 3,
+      "titulo": "O sistema guarda a decisão como 'pendente'",
+      "endpoint": null,
+      "metodo": null,
+      "request": null,
+      "resposta_esperada": null,
+      "explicacao": "Internamente (não é uma chamada HTTP), a API lembra que 'evt-cliente-001' recebeu o braço 2 e está esperando saber se o cliente reagiu bem ou não. Isso fica guardado até chegar um /reward correspondente."
+    },
+
+    {
+      "passo": 4,
+      "titulo": "Algum tempo depois: o cliente reagiu à oferta",
+      "endpoint": "/reward",
+      "metodo": "POST",
+      "request": {
+        "event_id": "evt-cliente-001",
+        "arm_id": 2,
+        "reward": 1.0
+      },
+      "resposta_esperada": {
+        "status": "updated",
+        "arm_id": 2,
+        "reward": 1.0
+      },
+      "explicacao": "reward=1.0 significa que o cliente converteu/aceitou a oferta que foi mostrada (reward=0.0 seria 'não converteu'). Isso NÃO é o cliente chamando a API — na vida real seria um evento de negócio (cliente clicou, contratou, etc.) que dispara essa chamada internamente. A política Thompson Sampling usa esse resultado pra ficar mais confiante (ou menos) na próxima vez que sortear o braço 2."
+    },
+
+    {
+      "passo": 5,
+      "titulo": "Um cliente diferente, com perfil de risco",
+      "endpoint": "/decide",
+      "metodo": "POST",
+      "request": {
+        "event_id": "evt-cliente-002",
+        "subject_key": "cliente-456",
+        "context": {
+          "idade": 45,
+          "escolaridade": "basic.4y",
+          "inadimplencia": "yes"
+        }
+      },
+      "resposta_esperada": {
+        "event_id": "evt-cliente-002",
+        "arm_id": 1,
+        "arm_name": "educacao_financeira",
+        "policy_version": "thompson-v1",
+        "reason_codes": ["guardrail_inadimplencia_cartao_premium"],
+        "decided_at": "2026-01-15T10:31:00.000000"
+      },
+      "explicacao": "Aqui um guardrail de negócio entrou em ação: o Thompson Sampling ia sortear 'cartao_premium', mas como o cliente está inadimplente, a regra de suitability bloqueou e redirecionou pra 'educacao_financeira'. Isso é uma proteção que roda ANTES do resultado do bandit ser devolvido — o algoritmo de aprendizado sozinho só otimiza conversão, não sabe que oferecer crédito a quem já está em default é inadequado."
+    },
+
+    {
+      "passo": 6,
+      "titulo": "Consultar o estado agregado do modelo",
+      "endpoint": "/stats",
+      "metodo": "GET",
+      "request": null,
+      "resposta_esperada": {
+        "policy_version": "thompson-v1",
+        "total_decisions": 1,
+        "arms": [
+          {"arm_id": 0, "arm_name": "sem_oferta", "trials": 0, "successes": 0, "reward_rate": 0.0, "alpha": 1.0, "beta": 1.0},
+          {"arm_id": 1, "arm_name": "educacao_financeira", "trials": 0, "successes": 0, "reward_rate": 0.0, "alpha": 1.0, "beta": 1.0},
+          {"arm_id": 2, "arm_name": "simulador_credito", "trials": 1, "successes": 1, "reward_rate": 1.0, "alpha": 2.0, "beta": 1.0},
+          {"arm_id": 3, "arm_name": "cartao_premium", "trials": 0, "successes": 0, "reward_rate": 0.0, "alpha": 1.0, "beta": 1.0}
+        ]
+      },
+      "explicacao": "'trials' é quantas vezes cada braço recebeu reward confirmado (não conta /decide sozinho, só depois do /reward). 'alpha'/'beta' são os parâmetros da distribuição Beta que o Thompson Sampling usa pra sortear — quanto mais sucesso um braço acumula, maior o 'alpha' e mais ele tende a ser escolhido no futuro. total_decisions aqui é 1 porque só o passo 4 (evt-cliente-001) teve reward registrado; o passo 5 (evt-cliente-002) ainda está pendente."
+    }
+  ],
+
+  "conceitos_chave": {
+    "quem_decide": "A API decide, não o cliente — o cliente só 'aparece' com um contexto, e o sistema escolhe a oferta.",
+    "o_que_e_reward": "Reward é o resultado observado depois da oferta (converteu ou não), não uma nota que o cliente dá.",
+    "guardrails": "Regras determinísticas de negócio (idade, inadimplência, fadiga de contato) que rodam ANTES do resultado do bandit, sobrepondo a decisão estatística quando necessário.",
+    "cold_start": "Sem histórico (Thompson Sampling com prior Beta(1,1) uniforme), a escolha é quase aleatória entre os braços — o aprendizado só aparece depois de vários /decide + /reward acumulados."
+  }
+}
